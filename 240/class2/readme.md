@@ -1,0 +1,1 @@
+This class sucked and was boring as fuck.
