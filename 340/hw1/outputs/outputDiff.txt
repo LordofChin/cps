@@ -1,0 +1,32 @@
+--- sampleOutput.txt	2026-01-19 15:04:02
++++ realOutput.txt	2026-01-19 15:03:05
+@@ -3,18 +3,18 @@
+ Knapsack weight: 15
+ Knapsack size: 20
+ Number of items: 4
+-Item A (weight, size, value): 5 10 2.5
+-Item B (weight, size, value): 10 10 10
+-Item C (weight, size, value): 2 3 1
+-Item D (weight, size, value): 3 7 2
++Item A (weight, size, value): 5.0 10.0 2.5
++Item B (weight, size, value): 10.0 10.0 10.0
++Item C (weight, size, value): 2.0 3.0 1.0
++Item D (weight, size, value): 3.0 7.0 2.0
+ Finding optimal packing ....
+ Found a packing!
+-Total weight: 15
+-Total size: 20
+-Total value: [value]
+-Packing: Item A, Item B, ..., etc.
+-Total running time: [second] seconds
+-or
++Total weight: 15.00
++Total size: 20.00
++Total value: 13.00
++Packing: Item B, Item C, Item D
++Total running time: 0.055963 seconds
++or 
+ Finding optimal packing ....
+ No packing is found!
+-Total running time: [second] seconds
++Total running time: 0.038951 seconds
