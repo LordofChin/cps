@@ -1,5 +1,6 @@
 .data
-msg: .asciiz " sigma"
+add_msg: .asciiz " sigma"
+sub_msg: .asciiz " subtraction"
 
 .text
 li $t1, 60		# make 60 real
@@ -12,5 +13,13 @@ syscall			# 67 _-
 la $a0, msg
 li $v0, 4
 syscall
+
+li $t1, 70
+li $t2, 3
+sub $a0, $t1, $t2
+li $v0, 1
+syscall
+
+
 
 # lw $t0 48($s3) # loads word, 48 bytes after s3
