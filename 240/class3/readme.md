@@ -1,0 +1,1 @@
+I made the worlds WORST linked list implementation!
