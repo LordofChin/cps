@@ -1,0 +1,1 @@
+I hated the implementation as described by the assignment so I created a better one. :)
