@@ -9,19 +9,38 @@ Iterative:
 	do:	
     		mid <- index of the "middle" element	# calculate the bisect (middle) of the search space
     		midVal <- A[mid]				
-    		if  midVal == x:			# found x, return now
+    		if  (midVal == x):			# found x, return now
         		return mid;				
     		else:					# didn't find x, divide and conquer from here
-        		if midVal < x				# divide from low-end (search space divided in half)
-            		low <- mid + 1
-        		else					# divide from high-end (search space divided in half) 
-            		high = mid - 1
+        		if (midVal < x):		# remove the low-end (search space divided in half)
+            			low <- mid + 1		# search to the right of mid
+        		else:				# remove the high-end (search space divided in half) 
+            			high <- mid - 1		# Search to the left of mid
 	while: 
     		low <= high				# run until low and high converge (no x is found)
     		
 	return -1					# no index was found
 
 Recursive:
+	recursiveSearch(low <- index of first element, high <- index of last element):
+	
+	if (low >= high):			`	# run until low and high converge (no x is found)
+		return -1				# base case #1, no such element found
+	
+	mid <- index of the middle element		# calculate the bisect (middle) of the search space	
+	midVal <- A[mid]
+	
+	if (midVal == x):				# base case #2, x found at mid
+		return mid
+	else:						# didn't find x, divide and conquer from here
+		if (midVal < x):			# remove the low-end (search space divided in half)
+			recursiveSearch(mid + 1, high)  # Search to the right of mid
+		else:					# remove the high-end (search space divided in half)
+			recursiveSearch(low, mid - 1)	# Search to the left of mid
+	
+	
+	
+	
 
 
 
