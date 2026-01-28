@@ -12,9 +12,7 @@ lw $t1, f			# load f
 sub $t0, $t0, $t1		# calc-n-sto "e - f" segment
 
 # perform "+ A[100]" segment
-#la $t2, A			# load addr(A[0]) - keep ref open for sw
-lui $t2, %hi(A)
-ori $t2, $t2, %lo(A)
+la $t2, A			# load addr(A[0]) - keep ref open for sw
 lw $t1, 400($t2)		# deref//lw @ A[100] with offset 100 * 4//len(word)
 add $t0, $t0, $t1		# calc-n-sto "+ A[100]" segment
 
