@@ -1,0 +1,47 @@
+# Carter R. Tufts
+
+1. Identify each entity (indicate if the entity is a weak entity) and its key attribute. 
+Also,  identify  its  attributes.  Indicate  whether  an  attribute  is  composite,  multivalued,  or 
+derived. 
+
+    BANK        
+        is a strong entity and has attributes Code(key, single-value), Name(single-value), Addr(single-value)
+    BANK_BRANCH 
+        is a weak   entity and has attributes Branch_no(key, single-value), Addr(single-value)
+    ACCOUNT 
+        is a strong entity and has attributes Acct_no(key, single value), Balance(single-value), Type(single-value)
+    LOAN       
+        is a strong entity and has attributes Loan_no(key, single_value), Amount(single-value), Type(single-value)
+    CUSTOMER   
+        is a strong entity and has attributes Ssn(key, single-value), Phone(single-value), Name(single-value), Addr(single-value)
+
+2. For  each  relationship,  identify  the  cardinality  ratio  (one-to-one,  one-to-Many,  Many-to-
+one, or Many-to-Many),  and describe the information it conveys, considering both sides 
+of the relationship. 
+
+ 
+3. For each  relationship, identify the participation constraints (total or partial participation) 
+and describe the information it conveys, considering both sides of the relationship. 
+
+
+4. Indicate  if  the  relationship  is  an  identifying  relationship  (i.e.,  a  relationship  of  a  weak 
+entity). 
+
+
+
+5. Indicate attribute(s) of a relationship, if any. 
+
+    BRANCHES
+        2. is one-to-Many, one BANK can have many BANK_BRANCHes and many BANK_BRANCHes can belong to one BANK
+        3. this is partial participation, each branch must b elong to a bank, but not every bank needs to have a branch.
+        4.   
+    LOANS
+        1. is one-to-Many, one BANK_BRANCH can distrbute many LOANs, and many LOANs can be owned by one BANK_BRANCH
+    ACCTS
+        1. is one-to-Many, one BANK_BRANCH can accomodate many ACCOUNTs, and many ACCOUNTs can be created with one BANK_BRANCH
+    A_C 
+        1. is Many-to-Many, one CUSTOMER can manage many ACCOUNTs, and one ACCOUNT can be managed by many CUSTOMERs
+    L_C
+        1. is Many-to_Many, one CUTOMER can take out or pay on many LOANs, one LOAN can be managed or payed by many CUSTOMERs
+ 
+ 
