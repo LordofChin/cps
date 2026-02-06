@@ -37,10 +37,5 @@ Recursive:
 			recursiveSearch(mid + 1, high)  # Search to the right of mid
 		else:					# remove the high-end (search space divided in half)
 			recursiveSearch(low, mid - 1)	# Search to the left of mid
-	
-	
-	
-	
-
-
+			
 
