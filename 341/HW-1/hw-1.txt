@@ -1,0 +1,94 @@
+# Carter R. Tufts
+
+1. Identify each entity (indicate if the entity is a weak entity) and its key attribute. 
+Also,  identify  its  attributes.  Indicate  whether  an  attribute  is  composite,  multivalued,  or 
+derived. 
+
+2. For  each  relationship,  identify  the  cardinality  ratio  (one-to-one,  one-to-Many,  Many-to-
+one, or Many-to-Many),  and describe the information it conveys, considering both sides 
+of the relationship. 
+ 
+3. For each  relationship, identify the participation constraints (total or partial participation) 
+and describe the information it conveys, considering both sides of the relationship. 
+
+4. Indicate  if  the  relationship  is  an  identifying  relationship  (i.e.,  a  relationship  of  a  weak 
+entity). 
+
+5. Indicate attribute(s) of a relationship, if any. 
+
+ENTITIES:
+
+    BANK        
+        1. BANK         is a strong entity and has attributes 
+                            Code        (key, single-value)
+                            , Name      (single-value)
+                            , Addr      (single-value)
+    BANK_BRANCH 
+        1. BANK_BRANCH  is a weak   entity and has attributes 
+                            Branch_no   (key, single-value)
+                            , Addr      (single-value)
+    ACCOUNT 
+        1. ACCOUNT      is a strong entity and has attributes 
+                            Acct_no     (key, single value)
+                            , Balance   (single-value)
+                            , Type      (single-value)
+    LOAN       
+        1. LOAN         is a strong entity and has attributes 
+                            Loan_no     (key, single_value)
+                            , Amount    (single-value)
+                            , Type      (single-value)
+    CUSTOMER   
+        1. CUSTOMER     is a strong entity and has attributes 
+                            Ssn         (key, single-value)
+                            , Phone     (single-value)
+                            , Name      (single-value)
+                            , Addr      (single-value)
+                            
+RELATIONSHIPS:
+
+    BRANCHES
+        2. BRANCHES     is one-to-Many
+                            , a BANK relates to some BANK_BRANCHes
+                            , and a BANK_BRANCH relates to one BANK.
+        3. BRANCHES     is total BANK and total BANK_BRANCH
+                            , a BANK_BRANCH must relate to a BANK
+                            , and a BANK must relate to some BANK_BRANCHes.
+        4. BRANHCES     is an identifying relationship, because BANK_BRANCH is a weak entity.
+        5. BRANHCES     has no attributes. 
+    LOANS
+        2. LOANS        is one-to-Many
+                            , a BANK_BRANCH relates to some LOANs
+                            , and a LOAN relates to one BANK_BRANCH.
+        3. LOANS        is partial BANK_BRANCH and total LOAN
+                            , a BANK_BRANCH may relate to 0 or more LOANs
+                            , and a loan must relate to a BANK_BRANCH.
+        4. LOANS        is not an identifying relationship.
+        5. LOANS        has no attributes.
+    ACCTS
+        2. ACCTS        is one-to-Many
+                            , a BANK_BRANCH relates to some ACCOUNTs
+                            , and a ACCOUNT relates to one BANK_BRANCH.
+        3. ACCTS        is partial BANK_BRANCH and total ACCOUNT
+                            , a BANK_BRANCH may relate to 0 or more ACCOUNTs
+                            , and every ACCOUNT must relate to a BANK_BRANCH.
+        4. ACCTS        is not an identifying relationship.
+        5. ACCTS        has no attributes.
+    A_C 
+        2. A_C          is Many-to-Many
+                            , a CUSTOMER relates to some ACCOUNTs
+                            , and a ACCOUNT relates to some CUSTOMERs.
+        3. A_C          is partial CUSTOMER and total ACCOUNT
+                            , a CUSTOMER may relate to 0 or more ACCOUNTs
+                            , and every ACCOUNT must relate to some CUSTOMERs. 
+        4. A_C          is not an identifying relationship.
+        5. A_C          has no attributes.
+    L_C
+        2. L_C          is Many-to-Many
+                            , a CUTOMER may relate to some LOANs
+                            , and a LOAN relates to some CUSTOMERs.
+        3. L_C          is total LOAN and partial CUSTOMER
+                            , a LOAN must relate to some CUSTOMERs
+                            , and a CUSTOMER may relate to 0 or more LOANs
+        4. L_C          is not an identifying relationship.
+        5. L_C          has no attributes
+ 
