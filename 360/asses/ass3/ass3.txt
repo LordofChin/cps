@@ -1,0 +1,31 @@
+1) Translate the following machine code to assembly code ( Refer slides 27 and 28 in chapter 2 to solve this question) 
+28880002hex
+	Raw BIN: 
+		0010 1000 1000 1000 0000 0000 0000 0010
+	Readable BIN:
+		001010 00100 01000 0000000000000010
+	Understanding of BIN
+		slti   rs-4  rt-8  2
+	Convert registers and place in the correct order
+		slti   $t0,  $a0,  2
+
+
+2) Translate the following assembly code to machine code (Refer slide #30 to solve this question)
+
+beq $t0, $s1, L1
+
+ Assume L1 is in memory address 011010binary and beq has a syntax as:
+                                             
+
+                                            beq rs, rt, label
+
+ Opcode for beq is 000100
+
+	beq    rs    rt    immediate
+	000100 sssss ttttt iiii iiii iiii iiii
+	beq    rs-s1 rt-t0 immediate
+	000100 10001 01000 0000 0000 0001 1010
+
+binary is 00010010001010000000000000011010
+convert to hex 0001 0010 0010 1000 0000 0000 0001 1010
+hex is 0x1228001A

@@ -4,7 +4,6 @@ import java.util.TreeMap;
 import java.util.Scanner;
 import java.util.Collections;
 import java.util.Comparator;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -22,17 +21,18 @@ public class WordFreqCount
 
         WordFreqCount wfc = new WordFreqCount(filePath);
 
-        //wfc.printFreqyTable();
-        System.out.println("Top 20 Least Appeared Words: ");
+        System.out.println("Top 20 Least Appeared Words (redundancy ordered alphabetically by TreeMap implementation): ");
         wfc.printLowerFreqyTable(20);
 
         System.out.println("Top 20 Most Appeared Words: ");
         wfc.printHigherFreqyTable(20);
 
+
     }
 
     public WordFreqCount(String filePath)
     {
+        this.freqyTable = new TreeMap<>();
         setFreqyTable(filePath);
         sortedFreqyTable = sortByValue(this.freqyTable);
     }
@@ -55,7 +55,7 @@ public class WordFreqCount
             String line;
             while ((line = reader.readLine()) != null)
             {
-                String[] words = line.split("\\W+");
+                String[] words = line.split("\\W+|\\d+"); // split by 1 or more non word symbol, or 1 or more numeric symbols. 
                 for (String word : words) 
                 {
                     if (word.isEmpty()) continue;
@@ -73,36 +73,38 @@ public class WordFreqCount
         }
     }
 
-    public static List <Map.Entry<String, Integer>> sortByValue(Map<String, Integer> map) 
+    public static List<Map.Entry<String, Integer>> sortByValue(Map<String, Integer> map) 
     {
         List<Map.Entry<String, Integer>> list = new java.util.ArrayList<>(map.entrySet());
-        Collections.sort(list, new Comparator<Map.Entry<String, Integer>>() 
+        Collections.sort(list, new Comparator<Map.Entry<String, Integer>>() // use collections lambda function as shown in 240, because of HashMap abstraction
         {
             public int compare(Map.Entry<String, Integer> e1, Map.Entry<String, Integer> e2) 
             {
-                return e2.getValue().compareTo(e1.getValue());
+                return e1.getValue().compareTo(e2.getValue()); // in order sort of values (not keys), although keys seem to have been sorted by the TreeMap implementation LOL
             }
         });
         return list;
     }
 
-    public void printLowerFreqyTable(int threshold)
+    public void printLowerFreqyTable(int quant)    // quant is synonymous with stop in this method 
     {
-        for (Map.Entry<String, Integer> entry : this.freqyTable.entrySet()) 
+        Map.Entry<String, Integer> entry;  
+        for (int i = 0; i < quant; i++) 
         {
-            if (entry.getValue() < threshold) {
-                System.out.printf("%-15s: %d%n", entry.getKey(), entry.getValue());
-            }
+            entry = sortedFreqyTable.get(i);
+            System.out.printf("%-15s: %d%n", entry.getKey(), entry.getValue());
         }
     }
     
-    public void printHigherFreqyTable(int threshold)
+    public void printHigherFreqyTable(int quant)
     {
-        for (Map.Entry<String, Integer> entry : this.freqyTable.entrySet()) 
+        Map.Entry<String, Integer> entry;  
+        int iLast = this.sortedFreqyTable.size() - 1;
+        int stop = iLast - quant;
+        for (int i = iLast; i > stop; i--) 
         {
-            if (entry.getValue() > threshold) {
-                System.out.printf("%-15s: %d%n", entry.getKey(), entry.getValue());
-            }
+            entry = sortedFreqyTable.get(i);
+            System.out.printf("%-15s: %d%n", entry.getKey(), entry.getValue());
         }
     }
 }
