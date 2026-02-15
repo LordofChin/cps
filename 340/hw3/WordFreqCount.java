@@ -1,11 +1,11 @@
 import java.io.BufferedReader;
 import java.io.FileReader;
-import java.util.TreeMap;
-import java.util.Scanner;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
+import java.util.Scanner;
+import java.util.TreeMap;
 
 public class WordFreqCount
 {
@@ -76,11 +76,10 @@ public class WordFreqCount
     public static List<Map.Entry<String, Integer>> sortByValue(Map<String, Integer> map) 
     {
         List<Map.Entry<String, Integer>> list = new java.util.ArrayList<>(map.entrySet());
-        Collections.sort(list, new Comparator<Map.Entry<String, Integer>>() // use collections lambda function as shown in 240, because of HashMap abstraction
-        {
-            public int compare(Map.Entry<String, Integer> e1, Map.Entry<String, Integer> e2) 
-            {
-                return e1.getValue().compareTo(e2.getValue()); // in order sort of values (not keys), although keys seem to have been sorted by the TreeMap implementation LOL
+        Collections.sort(list, new Comparator<Map.Entry<String, Integer>>() {
+            @Override
+            public int compare(Map.Entry<String, Integer> e1, Map.Entry<String, Integer> e2) {
+                return e1.getValue().compareTo(e2.getValue());
             }
         });
         return list;
@@ -107,4 +106,6 @@ public class WordFreqCount
             System.out.printf("%-15s: %d%n", entry.getKey(), entry.getValue());
         }
     }
+
+
 }

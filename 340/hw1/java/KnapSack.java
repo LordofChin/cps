@@ -25,22 +25,23 @@ public class KnapSack
         try
         {
             System.out.println("Reading " + filename + " ....");
-            FileReader fileReader = null;
+            FileReader fileReader;
             try
             {
                 fileReader = new FileReader(filename);
-                BufferedReader reader = new BufferedReader(fileReader);
-
                 //read in weight and size capacities from the first line
-                String line = reader.readLine();
-                line.split(" ");
-                this.weight = Integer.parseInt(line.split(" ")[0]);
-                this.size = Integer.parseInt(line.split(" ")[1]);
-
-                //read in items from the rest of the file
-                while ((line = reader.readLine()) != null)
-                {
-                    items.add(new Item(line));
+                try (BufferedReader reader = new BufferedReader(fileReader)) {
+                    //read in weight and size capacities from the first line
+                    String line = reader.readLine();
+                    line.split(" ");
+                    this.weight = Integer.parseInt(line.split(" ")[0]);
+                    this.size = Integer.parseInt(line.split(" ")[1]);
+                    
+                    //read in items from the rest of the file
+                    while ((line = reader.readLine()) != null)
+                    {
+                        items.add(new Item(line));
+                    }
                 }
             }
             catch (FileNotFoundException e)
@@ -52,6 +53,7 @@ public class KnapSack
         {
             e.printStackTrace();
         }
+        
     }
 
 // All/most code below this point is LLM auto-completed code for helpers, getters, setters, and/or toString methods.
