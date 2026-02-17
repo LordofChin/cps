@@ -5,11 +5,11 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
 import java.util.Scanner;
-import java.util.TreeMap;
+import java.util.HashMap;
 
 public class WordFreqCount
 {
-    private TreeMap<String, Integer> freqyTable;
+    private HashMap<String, Integer> freqyTable;
     private List <Map.Entry<String, Integer>> sortedFreqyTable;
 
     public static void main(String[] args)
@@ -32,20 +32,11 @@ public class WordFreqCount
 
     public WordFreqCount(String filePath)
     {
-        this.freqyTable = new TreeMap<>();
+        this.freqyTable = new HashMap<>();
         setFreqyTable(filePath);
         sortedFreqyTable = sortByValue(this.freqyTable);
     }
     public WordFreqCount(){}
-
-    public void printFreqyTable()
-    {
-        System.out.println("Word Frequencies:");
-        for (Map.Entry<String, Integer> entry : this.freqyTable.entrySet()) 
-        {
-            System.out.printf("%-15s: %d%n", entry.getKey(), entry.getValue());
-        }
-    }
 
     public void setFreqyTable(String filePath)
     {
@@ -59,7 +50,7 @@ public class WordFreqCount
                 for (String word : words) 
                 {
                     if (word.isEmpty()) continue;
-                    word = word.toLowerCase();
+                    word = word;
                     this.freqyTable.put(word, this.freqyTable.getOrDefault(word, 0) + 1);
                 }
             }
@@ -91,7 +82,7 @@ public class WordFreqCount
         for (int i = 0; i < quant; i++) 
         {
             entry = sortedFreqyTable.get(i);
-            System.out.printf("%-15s: %d%n", entry.getKey(), entry.getValue());
+            System.out.printf("%s --> %d%n", entry.getKey(), entry.getValue());
         }
     }
     
@@ -103,7 +94,7 @@ public class WordFreqCount
         for (int i = iLast; i > stop; i--) 
         {
             entry = sortedFreqyTable.get(i);
-            System.out.printf("%-15s: %d%n", entry.getKey(), entry.getValue());
+            System.out.printf("%s --> %d%n", entry.getKey(), entry.getValue());
         }
     }
 
