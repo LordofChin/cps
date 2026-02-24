@@ -1,0 +1,69 @@
+import java.util.ArrayList;
+
+public class Member 
+{
+    private String name;
+    private String memberId;
+    private ArrayList<Book> borrowedBooks;
+
+    public Member(){}
+
+    public Member(String name, String memberId, ArrayList<Book> borrowedBooks) 
+    {
+        this.name = name;
+        this.memberId = memberId;
+        this.borrowedBooks = borrowedBooks;
+    }
+    public Member(String name, String memberId) 
+    {
+        this.name = name;
+        this.memberId = memberId;
+        this.borrowedBooks = new ArrayList<>();
+    }
+
+    public void borrowBook(Book book) 
+    {
+        if (book.getIsAvailable()) {
+            book.borrow();
+            borrowedBooks.add(book);
+        } else {
+            System.out.println("Cannot borrow: " + book.getTitle());
+        }
+    }
+
+    public void returnBook(Book book) 
+    {
+        if (borrowedBooks.contains(book)) {
+            book.returnBook();
+            borrowedBooks.remove(book);
+        } else {
+            System.out.println("You did not borrow: " + book.getTitle());
+        }
+    }
+
+    public String getName() 
+    {
+        return name;
+    }
+    public String getMemberId()
+    {
+        return memberId;
+    }
+    public ArrayList<Book> getBorrowedBooks() 
+    {
+        return borrowedBooks;
+    }
+
+    public void setName(String name) 
+    {
+        this.name = name;
+    }
+    public void setMemberId(String memberId)
+    {
+        this.memberId = memberId;
+    }
+    public void setBorrowedBooks(ArrayList<Book> borrowedBooks) 
+    {
+        this.borrowedBooks = borrowedBooks;
+    }
+}
