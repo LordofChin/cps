@@ -1,3 +1,7 @@
+<<<<<<< HEAD
+public class Member {
+    
+=======
 import java.util.ArrayList;
 
 public class Member 
@@ -71,4 +75,5 @@ public class Member
     {
         this.borrowedBooks = borrowedBooks;
     }
+>>>>>>> 9139c2fcc23c777c856769d93f62f25404a7ee62
 }

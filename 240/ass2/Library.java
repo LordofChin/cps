@@ -1,3 +1,7 @@
+<<<<<<< HEAD
+public class Library {
+    
+=======
 import java.util.ArrayList;
 
 public class Library 
@@ -76,4 +80,5 @@ public class Library
         this.members = members;
     }
 
+>>>>>>> 9139c2fcc23c777c856769d93f62f25404a7ee62
 }

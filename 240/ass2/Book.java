@@ -1,3 +1,7 @@
+<<<<<<< HEAD
+public class Book {
+    
+=======
 public class Book 
 {
     // fields/attributes
@@ -70,4 +74,5 @@ public class Book
         this.isAvailable = isAvailable;
     }
 
+>>>>>>> 9139c2fcc23c777c856769d93f62f25404a7ee62
 }
