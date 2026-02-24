@@ -1,10 +1,12 @@
 public class Book 
 {
+    // fields/attributes
     private String title;
     private String author;
     private String isbn;
     private boolean isAvailable;
 
+    // constructors
     public Book() {}
     public Book(String title, String author, String isbn) 
     {
@@ -14,6 +16,7 @@ public class Book
         this.isAvailable = true;
     }
 
+        // methods to borrow a book
         public void borrow()
         {
             if (isAvailable) {
@@ -24,12 +27,14 @@ public class Book
             }
         }
 
+        // method to return a book
         public void returnBook() 
         {
             System.out.println("You have returned: " + title);
             isAvailable = true;
         }
 
+    //getters
     public String getTitle() 
     {
         return title;
@@ -47,6 +52,7 @@ public class Book
         return isAvailable;
     }
 
+    // setters
     public void setTitle(String title) 
     {
         this.title = title;

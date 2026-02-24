@@ -2,12 +2,13 @@ import java.util.ArrayList;
 
 public class Library 
 {
+    // fields/attributes
     private String name;
     private ArrayList<Book> books;
     private ArrayList<Member> members;
 
+    // constructors
     public Library() {}
-
     public Library(String name) 
     {
         this.name = name;
@@ -15,21 +16,28 @@ public class Library
         this.members = new ArrayList<>();
     }
 
+    // method to add a book
     public void addBook(Book book) 
     {
         books.add(book);
         System.out.println("Added book: " + book.getTitle());
     }
+
+    // method to remove a book
     public void removeBook(Book book) 
     {
         books.remove(book);
         System.out.println("Removed book: " + book.getTitle());
     }
+
+    //method to register a member
     public void registerMember(Member member) 
     {
         members.add(member);
         System.out.println("Registered member: " + member.getName());
     }
+
+    //method to find a book by title
     public Book findBook(String title)
     {
         for (Book book : books) {
@@ -40,6 +48,7 @@ public class Library
         return null; 
     }
 
+    // getters
     public String getName()
     {
         return name;
@@ -53,6 +62,7 @@ public class Library
         return members;
     }
 
+    // setters
     public void setName(String name) 
     {
         this.name = name;
