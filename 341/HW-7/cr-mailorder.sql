@@ -1,6 +1,7 @@
 -- cr-mailorder.sql
 -- creates the mailorder DB-schema
--- ITC 341 partial hw7 (Homework #7)
+-- Carter Tufts
+-- ITC 341	Homework 7	Mar. 18, 2026
 
 -- keep these three commands at the top of every sql file
 set echo on
@@ -14,8 +15,8 @@ commit;
 -- using constraint declaration
 create table ZIPCODES
 (
-	zip 		char(5),
-	city 		varchar2(20),
+	zip char(5),
+	city varchar2(20),
 	constraint ZIPPK
 	    primary key(zip)
 );
@@ -23,15 +24,15 @@ create table ZIPCODES
 -- another way of declaring primary key
 --create table ZIPCODES2
 --(
---	zip 		char(5) primary key,
---	city 		varchar2(20),
+--	zip char(5) primary key,
+--	city varchar2(20),
 --);
 
 -- one another way of declaring primary key
 --create table ZIPCODES3
 --(
---	zip 		char(5),
---	city 		varchar2(20),
+--	zip char(5),
+--	city varchar2(20),
 --	primary key(zip)
 --);
 
@@ -40,16 +41,38 @@ commit;
 
 create table EMPLOYEES 
 (
-	eno 		number,
-	ename 		varchar2(20),
-	zip 		char(5),
-	hdate 		date,
-	constraint 	EMPSPK
+	eno number,
+	ename varchar2(20),
+	zip char(5),
+	hdate date,
+	constraint EMPSPK
 	    primary key(eno),
-	constraint 	EMPSZIPFK
+	constraint EMPSZIPFK
 	    foreign key(zip) references ZIPCODES(zip)
 	    	ON DELETE SET NULL
 );
 
+create table PARTS
+(
+	pno number,
+	pname varchar2(20)
+	qoh number,
+	price float,
+	level number,
+	constraint PRTSPK
+		primary key(pno)
+)
 
--- ADD the rest
+create table CUSTOMERS
+(
+	cno number,
+	cname varchar2(20),
+	street varchar2(20),
+	zip number,
+	phone varchar(12),
+	constraint PHN_FMT
+		CHECK (REGEXP_LIKE(phone, '^[0-9]{3}-[0-9]{3}-[0-9]{4}$')),
+	constraint CUSTPK
+		primary key(cno)
+	
+)

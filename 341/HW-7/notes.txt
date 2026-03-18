@@ -1,0 +1,4 @@
+sqlplus tufts1cr@cps-orcl4.se.cmich.edu/orcl4
+
+start <filename>.sql
+
