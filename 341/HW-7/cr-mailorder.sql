@@ -37,6 +37,11 @@ create table ZIPCODES
 --);
 
 drop table EMPLOYEES cascade constraints;
+drop table PARTS cascade constraints;
+drop table CUSTOMERS cascade constraints;
+drop table ORDERS cascade constraints;
+drop table ODETAILS cascade constraints;
+drop table ZIPCODES cascade constraints;
 commit;
 
 create table EMPLOYEES 
@@ -75,4 +80,40 @@ create table CUSTOMERS
 	constraint CUSTPK
 		primary key(cno)
 	
+)
+
+create table ORDERS
+(
+	ono number,
+	cno number,
+	eno number,
+	received date,
+	shipped date,
+	constraint ORDRPK
+		primary key(ono),
+	constraint ORDR_CNO
+		primary key(cno) references CUSTOMERS(cno),
+	constraint ORDR_ENO
+		foreign key(eno) references EMPLOYEES(eno)
+)
+
+create table ODETAILS
+(
+	ono number,
+	pno number,
+	qty number,
+	constraint ODTLS_ONO
+		foreign key(ono) references ORDERS(ono),
+	constraint ODTLS_PNO
+		foreign key(pno) references PARTS(pno),	
+	constraint DTLSPK
+		primaty key(ono, pno)
+
+)
+
+create table ZIPCODES
+(
+	zip number,
+	city varchar2(20),
+		primary key(zip)
 )
