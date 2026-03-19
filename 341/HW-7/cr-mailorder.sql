@@ -41,7 +41,6 @@ drop table PARTS cascade constraints;
 drop table CUSTOMERS cascade constraints;
 drop table ORDERS cascade constraints;
 drop table ODETAILS cascade constraints;
-drop table ZIPCODES cascade constraints;
 commit;
 
 create table EMPLOYEES 
@@ -60,27 +59,24 @@ create table EMPLOYEES
 create table PARTS
 (
 	pno number,
-	pname varchar2(20)
+	pname varchar2(20),
 	qoh number,
 	price float,
-	level number,
+	plevel number,
 	constraint PRTSPK
 		primary key(pno)
-)
+);
 
 create table CUSTOMERS
 (
 	cno number,
 	cname varchar2(20),
 	street varchar2(20),
-	zip number,
-	phone varchar(12),
-	constraint PHN_FMT
-		CHECK (REGEXP_LIKE(phone, '^[0-9]{3}-[0-9]{3}-[0-9]{4}$')),
+	zip char(5),
+	phone varchar2(12),
 	constraint CUSTPK
 		primary key(cno)
-	
-)
+);
 
 create table ORDERS
 (
@@ -92,10 +88,12 @@ create table ORDERS
 	constraint ORDRPK
 		primary key(ono),
 	constraint ORDR_CNO
-		primary key(cno) references CUSTOMERS(cno),
+		foreign key(cno) references CUSTOMERS(cno)
+			ON DELETE SET NULL,
 	constraint ORDR_ENO
 		foreign key(eno) references EMPLOYEES(eno)
-)
+			ON DELETE SET NULL
+);
 
 create table ODETAILS
 (
@@ -103,17 +101,11 @@ create table ODETAILS
 	pno number,
 	qty number,
 	constraint ODTLS_ONO
-		foreign key(ono) references ORDERS(ono),
+		foreign key(ono) references ORDERS(ono)
+			ON DELETE SET NULL,
 	constraint ODTLS_PNO
-		foreign key(pno) references PARTS(pno),	
+		foreign key(pno) references PARTS(pno)
+			ON DELETE SET NULL,	
 	constraint DTLSPK
-		primaty key(ono, pno)
-
-)
-
-create table ZIPCODES
-(
-	zip number,
-	city varchar2(20),
-		primary key(zip)
-)
+		primary key(ono, pno)
+);
