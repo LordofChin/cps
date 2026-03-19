@@ -88,11 +88,9 @@ create table ORDERS
 	constraint ORDRPK
 		primary key(ono),
 	constraint ORDR_CNO
-		foreign key(cno) references CUSTOMERS(cno)
-			ON DELETE SET NULL,
+		foreign key(cno) references CUSTOMERS(cno),
 	constraint ORDR_ENO
 		foreign key(eno) references EMPLOYEES(eno)
-			ON DELETE SET NULL
 );
 
 create table ODETAILS
@@ -101,11 +99,9 @@ create table ODETAILS
 	pno number,
 	qty number,
 	constraint ODTLS_ONO
-		foreign key(ono) references ORDERS(ono)
-			ON DELETE SET NULL,
+		foreign key(ono) references ORDERS(ono),
 	constraint ODTLS_PNO
-		foreign key(pno) references PARTS(pno)
-			ON DELETE SET NULL,	
+		foreign key(pno) references PARTS(pno),
 	constraint DTLSPK
 		primary key(ono, pno)
 );

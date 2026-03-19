@@ -1,0 +1,492 @@
+SQL> start U://cps/341/HW-7/cr-mailorder.sql
+SQL> -- cr-mailorder.sql
+SQL> -- creates the mailorder DB-schema
+SQL> -- Carter Tufts
+SQL> -- ITC 341 Homework 7      Mar. 18, 2026
+SQL>
+SQL> -- keep these three commands at the top of every sql file
+SQL> set echo on
+SQL> set linesize 150
+SQL> set pagesize 120
+SQL>
+SQL> drop table ZIPCODES cascade constraints;
+
+Table dropped.
+
+SQL> commit;
+
+Commit complete.
+
+SQL>
+SQL> -- better way of declaring primary key and foreign key
+SQL> -- using constraint declaration
+SQL> create table ZIPCODES
+  2  (
+  3          zip char(5),
+  4          city varchar2(20),
+  5          constraint ZIPPK
+  6              primary key(zip)
+  7  );
+
+Table created.
+
+SQL>
+SQL> -- another way of declaring primary key
+SQL> --create table ZIPCODES2
+SQL> --(
+SQL> -- zip char(5) primary key,
+SQL> -- city varchar2(20),
+SQL> --);
+SQL>
+SQL> -- one another way of declaring primary key
+SQL> --create table ZIPCODES3
+SQL> --(
+SQL> -- zip char(5),
+SQL> -- city varchar2(20),
+SQL> -- primary key(zip)
+SQL> --);
+SQL>
+SQL> drop table EMPLOYEES cascade constraints;
+
+Table dropped.
+
+SQL> drop table PARTS cascade constraints;
+
+Table dropped.
+
+SQL> drop table CUSTOMERS cascade constraints;
+
+Table dropped.
+
+SQL> drop table ORDERS cascade constraints;
+
+Table dropped.
+
+SQL> drop table ODETAILS cascade constraints;
+
+Table dropped.
+
+SQL> commit;
+
+Commit complete.
+
+SQL>
+SQL> create table EMPLOYEES
+  2  (
+  3          eno number,
+  4          ename varchar2(20),
+  5          zip char(5),
+  6          hdate date,
+  7          constraint EMPSPK
+  8              primary key(eno),
+  9          constraint EMPSZIPFK
+ 10              foreign key(zip) references ZIPCODES(zip)
+ 11                  ON DELETE SET NULL
+ 12  );
+
+Table created.
+
+SQL>
+SQL> create table PARTS
+  2  (
+  3          pno number,
+  4          pname varchar2(20),
+  5          qoh number,
+  6          price float,
+  7          plevel number,
+  8          constraint PRTSPK
+  9                  primary key(pno)
+ 10  );
+
+Table created.
+
+SQL>
+SQL> create table CUSTOMERS
+  2  (
+  3          cno number,
+  4          cname varchar2(20),
+  5          street varchar2(20),
+  6          zip char(5),
+  7          phone varchar2(12),
+  8          constraint CUSTPK
+  9                  primary key(cno)
+ 10  );
+
+Table created.
+
+SQL>
+SQL> create table ORDERS
+  2  (
+  3          ono number,
+  4          cno number,
+  5          eno number,
+  6          received date,
+  7          shipped date,
+  8          constraint ORDRPK
+  9                  primary key(ono),
+ 10          constraint ORDR_CNO
+ 11                  foreign key(cno) references CUSTOMERS(cno),
+ 12          constraint ORDR_ENO
+ 13                  foreign key(eno) references EMPLOYEES(eno)
+ 14  );
+
+Table created.
+
+SQL>
+SQL> create table ODETAILS
+  2  (
+  3          ono number,
+  4          pno number,
+  5          qty number,
+  6          constraint ODTLS_ONO
+  7                  foreign key(ono) references ORDERS(ono),
+  8          constraint ODTLS_PNO
+  9                  foreign key(pno) references PARTS(pno),
+ 10          constraint DTLSPK
+ 11                  primary key(ono, pno)
+ 12  );
+
+Table created.
+
+SQL> start U://cps/341/HW-7/ins-mailorder.sql
+SQL> -- ins-mailorder.sql
+SQL> -- inserts tuples into the mailorder DB
+SQL> -- ITC 341 partial hw7
+SQL>
+SQL> -- keep these two commands at the top of every sql file
+SQL> set echo on
+SQL> set linesize 150
+SQL> set pagesize 120
+SQL>
+SQL> delete from ZIPCODES;
+
+0 rows deleted.
+
+SQL> commit;
+
+Commit complete.
+
+SQL> insert into ZIPCODES values ('67226', 'Wichita');
+
+1 row created.
+
+SQL> insert into ZIPCODES values ('60606', 'Fort Dodge');
+
+1 row created.
+
+SQL> insert into ZIPCODES values ('50302', 'Kansas City');
+
+1 row created.
+
+SQL> insert into ZIPCODES values ('54444', 'Colombia');
+
+1 row created.
+
+SQL> insert into ZIPCODES values ('66002', 'Liberal');
+
+1 row created.
+
+SQL> insert into ZIPCODES values ('61111', 'Fort Hays');
+
+1 row created.
+
+SQL>
+SQL> delete from EMPLOYEES;
+
+0 rows deleted.
+
+SQL> commit;
+
+Commit complete.
+
+SQL> insert into EMPLOYEES values (1000, 'Jones', '67226', '12-DEC-95');
+
+1 row created.
+
+SQL> insert into EMPLOYEES values (1001, 'Smith', '60606', '01-JAN-92');
+
+1 row created.
+
+SQL> insert into EMPLOYEES values (1002, 'Brown', '50302', '01-SEP-94');
+
+1 row created.
+
+SQL>
+SQL> delete from PARTS;
+
+0 rows deleted.
+
+SQL> commit;
+
+Commit complete.
+
+SQL> insert into PARTS values (10506, 'Land Before Time I', 200, 19.99, 20);
+
+1 row created.
+
+SQL> insert into PARTS values (10507, 'Land Before Time II', 156, 19.99, 20);
+
+1 row created.
+
+SQL> insert into PARTS values (10508, 'Land Before Time III', 190, 19.99, 20);
+
+1 row created.
+
+SQL> insert into PARTS values (10509, 'Land Before Time IV', 60, 19.99, 20);
+
+1 row created.
+
+SQL> insert into PARTS values (10601, 'Sleeping Beauty', 300, 24.99, 20);
+
+1 row created.
+
+SQL> insert into PARTS values (10701, 'When Harry Met Sally', 120, 19.99, 30);
+
+1 row created.
+
+SQL> insert into PARTS values (10800, 'Dirty Harry', 140, 14.99, 30);
+
+1 row created.
+
+SQL> insert into PARTS values (10900, 'Dr. Zhivago', 100, 24.99, 30);
+
+1 row created.
+
+SQL>
+SQL> delete from CUSTOMERS;
+
+0 rows deleted.
+
+SQL> commit;
+
+Commit complete.
+
+SQL> insert into CUSTOMERS values (1111, 'Charles', '123 Main St.', '67226', '316-636-5555');
+
+1 row created.
+
+SQL> insert into CUSTOMERS values (2222, 'Bertram', '237 Ash Ave.', '67226', '316-689-5555');
+
+1 row created.
+
+SQL> insert into CUSTOMERS values (3333, 'Barbara', '111 Inwood St.', '60606', '316-111-1234');
+
+1 row created.
+
+SQL>
+SQL> delete from ORDERS;
+
+0 rows deleted.
+
+SQL> commit;
+
+Commit complete.
+
+SQL> INSERT INTO ORDERS VALUES (1020, 1111, 1000, TO_DATE('10-DEC-94', 'DD-MON-RR'), TO_DATE('12-DEC-94', 'DD-MON-RR'));
+
+1 row created.
+
+SQL> INSERT INTO ORDERS VALUES (1021, 1111, 1000, TO_DATE('12-JAN-95', 'DD-MON-RR'), TO_DATE('15-JAN-95', 'DD-MON-RR'));
+
+1 row created.
+
+SQL> INSERT INTO ORDERS VALUES (1022, 2222, 1001, TO_DATE('13-FEB-95', 'DD-MON-RR'), TO_DATE('20-FEB-95', 'DD-MON-RR'));
+
+1 row created.
+
+SQL> INSERT INTO ORDERS VALUES (1023, 3333, 1000, TO_DATE('20-JAN-97', 'DD-MON-RR'), NULL);
+
+1 row created.
+
+SQL>
+SQL> delete from ODETAILS;
+
+0 rows deleted.
+
+SQL> commit;
+
+Commit complete.
+
+SQL> insert into ODETAILS values (1020, 10506, 1);
+
+1 row created.
+
+SQL> insert into ODETAILS values (1020, 10507, 1);
+
+1 row created.
+
+SQL> insert into ODETAILS values (1020, 10508, 2);
+
+1 row created.
+
+SQL> insert into ODETAILS values (1020, 10509, 3);
+
+1 row created.
+
+SQL> insert into ODETAILS values (1021, 10601, 4);
+
+1 row created.
+
+SQL> insert into ODETAILS values (1022, 10601, 1);
+
+1 row created.
+
+SQL> insert into ODETAILS values (1022, 10701, 1);
+
+1 row created.
+
+SQL> insert into ODETAILS values (1023, 10800, 1);
+
+1 row created.
+
+SQL> insert into ODETAILS values (1023, 10900, 1);
+
+1 row created.
+
+SQL> start U://cps/341/HW-7/q-mailorder.sql
+SQL> -- q-mailorder.sql
+SQL> -- queries
+SQL> -- ITC 341 partial hw7
+SQL>
+SQL> -- keep these three commands at the top of every sql file
+SQL> set echo on
+SQL> set linesize 150
+SQL> set pagesize 120
+SQL>
+SQL> -- query 2.1 testing your tables and displaying the data
+SQL> select * from employees;
+
+       ENO ENAME                ZIP   HDATE
+---------- -------------------- ----- ---------
+      1000 Jones                67226 12-DEC-95
+      1001 Smith                60606 01-JAN-92
+      1002 Brown                50302 01-SEP-94
+
+SQL> select * from zipcodes;
+
+ZIP   CITY
+----- --------------------
+67226 Wichita
+60606 Fort Dodge
+50302 Kansas City
+54444 Colombia
+66002 Liberal
+61111 Fort Hays
+
+6 rows selected.
+
+SQL> select count(*) from employees;
+
+  COUNT(*)
+----------
+         3
+
+SQL> select count(*) as ZIP_COUNT from zipcodes;
+
+ ZIP_COUNT
+----------
+         6
+
+SQL>
+SQL> -- comment out the above queries for your homework
+SQL>
+SQL> -- your queries goes here for hw#6
+SQL>
+SQL> --query 2.1
+SQL> SELECT pno, pname FROM parts WHERE price < 20.00;
+
+       PNO PNAME
+---------- --------------------
+     10506 Land Before Time I
+     10507 Land Before Time II
+     10508 Land Before Time III
+     10509 Land Before Time IV
+     10701 When Harry Met Sally
+     10800 Dirty Harry
+
+6 rows selected.
+
+SQL>
+SQL> -- query 2.2: get all the rows in employees table
+SQL> SELECT * FROM employees;
+
+       ENO ENAME                ZIP   HDATE
+---------- -------------------- ----- ---------
+      1000 Jones                67226 12-DEC-95
+      1001 Smith                60606 01-JAN-92
+      1002 Brown                50302 01-SEP-94
+
+SQL>
+SQL> -- query 2.3
+SQL> SELECT DISTINCT pno FROM odetails;
+
+       PNO
+----------
+     10601
+     10900
+     10506
+     10701
+     10800
+     10508
+     10507
+     10509
+
+8 rows selected.
+
+SQL>
+SQL> -- query 2.4
+SQL> SELECT * FROM customers WHERE cname like 'A%';
+
+no rows selected
+
+SQL>
+SQL> -- query 2.5
+SQL> SELECT ono, cname FROM orders, customers WHERE customers.cno = orders.cno AND shipped is null;
+
+       ONO CNAME
+---------- --------------------
+      1023 Barbara
+
+SQL>
+SQL> -- query 2.7
+SQL> SELECT distinct cname, ename FROM customers, orders, employees WHERE customers.cno = orders.cno and employees.eno = orders.eno;
+
+CNAME                ENAME
+-------------------- --------------------
+Bertram              Smith
+Barbara              Jones
+Charles              Jones
+
+SQL>
+SQL> -- query 2.8
+SQL> SELECT x.ono, x.pno, p.pname, x.qty, p.price, (x.qty * p.price) total FROM odetails x, parts p WHERE x.pno = p.pno;
+
+       ONO        PNO PNAME                       QTY      PRICE      TOTAL
+---------- ---------- -------------------- ---------- ---------- ----------
+      1020      10506 Land Before Time I            1      19.99      19.99
+      1020      10507 Land Before Time II           1      19.99      19.99
+      1020      10508 Land Before Time III          2      19.99      39.98
+      1020      10509 Land Before Time IV           3      19.99      59.97
+      1021      10601 Sleeping Beauty               4      24.99      99.96
+      1022      10601 Sleeping Beauty               1      24.99      24.99
+      1022      10701 When Harry Met Sally          1      19.99      19.99
+      1023      10800 Dirty Harry                   1      14.99      14.99
+      1023      10900 Dr. Zhivago                   1      24.99      24.99
+
+9 rows selected.
+
+SQL>
+SQL> --query 2.9
+SQL> SELECT c1.cno, c2.cno FROM customers c1, customers c2 WHERE c1.zip = c2.zip and c1.cno < c2.cno;
+
+       CNO        CNO
+---------- ----------
+      1111       2222
+
+SQL>
+SQL> --query 2.10
+SQL> SELECT distinct y1.pno FROM orders x1, orders x2, odetails y1, odetails y2 WHERE y1.pno = y2.pno AND y1.ono = x1.ono AND y2.ono = x2.ono AND x1.ono < x2.ono;
+
+       PNO
+----------
+     10601
