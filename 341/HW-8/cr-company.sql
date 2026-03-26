@@ -126,6 +126,7 @@ create table Dependent
 	dependent_name varchar2(15),
 	sex varchar2(1) check (Sex = 'M' or Sex = 'F'),
 	bdate date,
+	relationship varchar2(15),
 	constraint DEPENDENTPK
 		primary key (essn, dependent_name),
 	constraint DEPENDENTEMPFK

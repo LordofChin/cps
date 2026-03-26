@@ -49,6 +49,9 @@ insert into Employee values
 insert into Employee values 
 ('Ahmad','V','Jabbar','987987987','29-MAR-69','980 Dallas, Houston, TX','M',25000,'987654321',4);
 
+
+delete from Project;
+commit;
 insert into Project values ('ProductX',1,'Bellaire',5);
 insert into Project values ('ProductY',2,'Sugarland',5);
 insert into Project values ('ProductZ',3,'Houston',5);
@@ -56,6 +59,8 @@ insert into Project values ('Computerization',10,'Stafford',4);
 insert into Project values ('Reorganization',20,'Houston',1);
 insert into Project values ('Newbenefits',30,'Stafford',4);
 
+delete from Works_On;
+commit;
 insert into Works_On values ('123456789',1,32.5);
 insert into Works_On values ('123456789',2,7.5);
 insert into Works_On values ('666884444',3,40.0);
@@ -73,6 +78,9 @@ insert into Works_On values ('987654321',30,20.0);
 insert into Works_On values ('987654321',20,15.0);
 insert into Works_On values ('888665555',20,NULL);
   
+
+delete from Dependent;
+commit;
 insert into Dependent values ('333445555','Alice','F','05-APR-86','Daughter');
 insert into Dependent values ('333445555','Theodore','M','25-OCT-83','Son');
 insert into Dependent values ('333445555','Joy','F','03-MAY-58','Spouse');
