@@ -72,4 +72,63 @@ alter table Employee add
 	constraint EMPDEPTFK foreign key(dno) references Department(dnumber) 
 	ON DELETE SET NULL;
 
--- ADD the rest
+drop table Dept_Locations cascade constraints;
+commit;
+
+create table Dept_Locations
+(
+    dnumber number,
+    dlocation varchar2(15),
+    constraint DEPTLOCPK
+        primary key (dnumber, dlocation),
+    constraint DEPTLOCDEPTFK
+        foreign key (dnumber) references Department(dnumber)
+        on delete cascade
+);
+
+drop table Project cascade constraints;
+commit;
+create table Project
+(
+	pname varchar2(15),
+	pnumber number,
+	plocation varchar2(15),
+	dnum number,
+	constraint PROJPK
+		primary key (pnumber),
+	constraint PROJDEPTFK
+		foreign key (dnum) references Department(dnumber)
+		on delete set null
+);
+
+drop table Works_On cascade constraints;
+commit;
+create table Works_On
+(
+	essn char(9),
+	pno number,
+	hours number,
+	constraint WORKSONPK
+		primary key (essn, pno),
+	constraint WORKSONEMPFK
+		foreign key (essn) references Employee(ssn)
+		on delete cascade,
+	constraint WORKSONPROJFK
+		foreign key (pno) references Project(pnumber)
+		on delete cascade
+);
+
+drop table Dependent cascade constraints;
+commit;
+create table Dependent
+(	
+	essn char(9),
+	dependent_name varchar2(15),
+	sex varchar2(1) check (Sex = 'M' or Sex = 'F'),
+	bdate date,
+	constraint DEPENDENTPK
+		primary key (essn, dependent_name),
+	constraint DEPENDENTEMPFK
+		foreign key (essn) references Employee(ssn)
+		on delete cascade
+);
