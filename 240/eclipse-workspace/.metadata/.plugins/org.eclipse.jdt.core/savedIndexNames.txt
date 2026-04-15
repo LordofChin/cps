@@ -1,0 +1,8 @@
+INDEX VERSION 1.134+\\Udrive\tufts1cr$\cps\240\eclipse-workspace\.metadata\.plugins\org.eclipse.jdt.core
+1865797976.index
+436986174.index
+3804786636.index
+2777365499.index
+944194755.index
+2366646778.index
+1041960851.index
