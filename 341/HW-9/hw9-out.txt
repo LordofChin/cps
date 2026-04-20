@@ -1,0 +1,583 @@
+SQL> start cr-company.sql
+SQL> set linesize 150
+SQL> set pagesize 120
+SQL> 
+SQL> drop table Employee cascade constraints;
+
+Table dropped.
+
+SQL> commit;
+
+Commit complete.
+
+SQL> 
+SQL> create table Employee
+  2  (
+  3  	     fname varchar2(15),
+  4  	     minit varchar2(1), -- can be char
+  5  	     lname varchar2(15),
+  6  	     ssn char(9),
+  7  	     bdate date,
+  8  	     address varchar2(50),
+  9  	     sex varchar2(1)	     CHECK(Sex = 'M' or Sex = 'F'),
+ 10  	     salary number, -- need to put check on salary
+ 11  	     superssn char(9),
+ 12  	     dno number      DEFAULT 0,
+ 13  	     constraint EMPPK
+ 14  		 primary key(ssn),
+ 15  	     constraint EMPSUPERVRFK
+ 16  		 foreign key(superssn) references Employee(ssn)
+ 17  		     ON DELETE SET NULL
+ 18  --
+ 19  --   Note:
+ 20  --      ON DELETE SET DEFAULT, ON UPDATE CASCADE
+ 21  -- Oracle does not support cascading updates, and does not allow you to set the value to the default
+ 22  -- when the parent row is deleted. Your two options for an on delete behavior are cascade or set null.
+ 23  -- Tested: February 05, 2018
+ 24  --      , constraint EMPDEPTFK
+ 25  -- 	     foreign key(dno) references Department(dnumber)
+ 26  -- 		     ON DELETE SET NULL
+ 27  -- ERROR - Department table has not been created yet
+ 28  -- need to postpone this constraint
+ 29  -- use alter table command to add this constraint
+ 30  -- alter table Employee add constraint EMPDEPTFK
+ 31  --     foreign key(dno) references Department(dnumber)
+ 32  --     ON DELETE SET NULL
+ 33  );
+
+Table created.
+
+SQL> 
+SQL> drop table Department cascade constraints;
+
+Table dropped.
+
+SQL> commit;
+
+Commit complete.
+
+SQL> create table Department
+  2  (
+  3  	     dname varchar2(15)      NOT NULL,
+  4  	     dnumber number,
+  5  	     mgrssn char(9)	     DEFAULT '000000000',
+  6  	     mgrstartdate date,
+  7  	     constraint DEPTPK
+  8  		 primary key(dnumber),
+  9  	     constraint DEPTMGRFK
+ 10  		 foreign key(mgrssn) references Employee(ssn)
+ 11  			     ON DELETE SET NULL
+ 12  --
+ 13  -- 	     ON DELETE SET DEFAULT, ON UPDATE CASCADE
+ 14  --
+ 15  -- The above actions for DELETE SET DEFAULT and for UPDATE CASCADE does not work
+ 16  -- with  the current SQL-plus version we have at this time.
+ 17  -- Just use SET NULL for delete and disable the update action part of the constraint.
+ 18  --
+ 19  );
+
+Table created.
+
+SQL> 
+SQL> alter table Employee add
+  2  	     constraint EMPDEPTFK foreign key(dno) references Department(dnumber)
+  3  	     ON DELETE SET NULL;
+
+Table altered.
+
+SQL> 
+SQL> drop table Dept_Locations cascade constraints;
+
+Table dropped.
+
+SQL> commit;
+
+Commit complete.
+
+SQL> 
+SQL> create table Dept_Locations
+  2  (
+  3  	 dnumber number,
+  4  	 dlocation varchar2(15),
+  5  	 constraint DEPTLOCPK
+  6  	     primary key (dnumber, dlocation),
+  7  	 constraint DEPTLOCDEPTFK
+  8  	     foreign key (dnumber) references Department(dnumber)
+  9  	     on delete cascade
+ 10  );
+
+Table created.
+
+SQL> 
+SQL> drop table Project cascade constraints;
+
+Table dropped.
+
+SQL> commit;
+
+Commit complete.
+
+SQL> create table Project
+  2  (
+  3  	     pname varchar2(15),
+  4  	     pnumber number,
+  5  	     plocation varchar2(15),
+  6  	     dnum number,
+  7  	     constraint PROJPK
+  8  		     primary key (pnumber),
+  9  	     constraint PROJDEPTFK
+ 10  		     foreign key (dnum) references Department(dnumber)
+ 11  		     on delete set null
+ 12  );
+
+Table created.
+
+SQL> 
+SQL> drop table Works_On cascade constraints;
+
+Table dropped.
+
+SQL> commit;
+
+Commit complete.
+
+SQL> create table Works_On
+  2  (
+  3  	     essn char(9),
+  4  	     pno number,
+  5  	     hours number,
+  6  	     constraint WORKSONPK
+  7  		     primary key (essn, pno),
+  8  	     constraint WORKSONEMPFK
+  9  		     foreign key (essn) references Employee(ssn)
+ 10  		     on delete cascade,
+ 11  	     constraint WORKSONPROJFK
+ 12  		     foreign key (pno) references Project(pnumber)
+ 13  		     on delete cascade
+ 14  );
+
+Table created.
+
+SQL> 
+SQL> drop table Dependent cascade constraints;
+
+Table dropped.
+
+SQL> commit;
+
+Commit complete.
+
+SQL> create table Dependent
+  2  (
+  3  	     essn char(9),
+  4  	     dependent_name varchar2(15),
+  5  	     sex varchar2(1) check (Sex = 'M' or Sex = 'F'),
+  6  	     bdate date,
+  7  	     relationship varchar2(15),
+  8  	     constraint DEPENDENTPK
+  9  		     primary key (essn, dependent_name),
+ 10  	     constraint DEPENDENTEMPFK
+ 11  		     foreign key (essn) references Employee(ssn)
+ 12  		     on delete cascade
+ 13  );
+
+Table created.
+
+SQL> start ins-company.sql
+SQL> -- ins-company.sql
+SQL> -- inserts tuples into the COMPANY DB
+SQL> -- partial
+SQL> 
+SQL> -- keep these two commands at the top of every sql file
+SQL> set echo on
+SQL> set linesize 150
+SQL> set pagesize 120
+SQL> 
+SQL> delete from Employee;
+
+0 rows deleted.
+
+SQL> commit;
+
+Commit complete.
+
+SQL> 
+SQL> -- insert only managers first with their dno is null
+SQL> INSERT INTO employee VALUES
+  2    ('James','E','Borg','888665555','10-NOV-37','450 Stone, Houston, TX','M',55000,null,null);
+
+1 row created.
+
+SQL> INSERT INTO employee VALUES
+  2    ('Franklin','T','Wong','333445555', to_date('1955-12-08', 'YYYY-MM-DD'), '638 Voss, Houston, TX','M',40000,'888665555',null);
+
+1 row created.
+
+SQL> insert into employee VALUES
+  2    ('Jennifer','S','Wallace','987654321','20-JUN-41','291 Berry, Bellaire, TX','F',43000,'888665555',null);
+
+1 row created.
+
+SQL> -- need more manager inserts to employee
+SQL> 
+SQL> delete from Department;
+
+0 rows deleted.
+
+SQL> commit;
+
+Commit complete.
+
+SQL> insert into Department values ('Administration',4,'987654321','01-JAN-1995');
+
+1 row created.
+
+SQL> insert into Department values ('Research',5,'333445555','22-MAY-1988');
+
+1 row created.
+
+SQL> insert into Department values ('Headquarters',1,'888665555','19-JUN-1981');
+
+1 row created.
+
+SQL> -- need more inserts here for Department
+SQL> 
+SQL> -- now, update employee.dno for managers
+SQL> UPDATE employee SET dno = 1 WHERE ssn = '888665555';
+
+1 row updated.
+
+SQL> UPDATE employee SET dno = 5 WHERE ssn = '333445555';
+
+1 row updated.
+
+SQL> -- need to update the rest of managers
+SQL> 
+SQL> -- insert the rest of non-manager employees, supervisors first
+SQL> insert into Employee values ('John','B','Smith','123456789','09-JAN-1965','731 Fondren, Houston, TX','M',30000,'333445555',5);
+
+1 row created.
+
+SQL> -- need more inserts here for Employee
+SQL> 
+SQL> -- ADD the rest
+SQL> 
+SQL> insert into Employee values
+  2  ('Alicia','J','Zelaya','999887777','19-JAN-68','3321 Castle, Spring, TX','F',25000,'987654321',4);
+
+1 row created.
+
+SQL> 
+SQL> insert into Employee values
+  2  ('Ramesh','K','Narayan','666884444','15-SEP-62','975 Fire Oak, Humble, TX','M',38000,'333445555',5);
+
+1 row created.
+
+SQL> 
+SQL> insert into Employee values
+  2  ('Joyce','A','English','453453453','31-JUL-72','5631 Rice, Houston, TX','F',25000,'333445555',5);
+
+1 row created.
+
+SQL> 
+SQL> insert into Employee values
+  2  ('Ahmad','V','Jabbar','987987987','29-MAR-69','980 Dallas, Houston, TX','M',25000,'987654321',4);
+
+1 row created.
+
+SQL> 
+SQL> 
+SQL> delete from Project;
+
+0 rows deleted.
+
+SQL> commit;
+
+Commit complete.
+
+SQL> insert into Project values ('ProductX',1,'Bellaire',5);
+
+1 row created.
+
+SQL> insert into Project values ('ProductY',2,'Sugarland',5);
+
+1 row created.
+
+SQL> insert into Project values ('ProductZ',3,'Houston',5);
+
+1 row created.
+
+SQL> insert into Project values ('Computerization',10,'Stafford',4);
+
+1 row created.
+
+SQL> insert into Project values ('Reorganization',20,'Houston',1);
+
+1 row created.
+
+SQL> insert into Project values ('Newbenefits',30,'Stafford',4);
+
+1 row created.
+
+SQL> 
+SQL> delete from Works_On;
+
+0 rows deleted.
+
+SQL> commit;
+
+Commit complete.
+
+SQL> insert into Works_On values ('123456789',1,32.5);
+
+1 row created.
+
+SQL> insert into Works_On values ('123456789',2,7.5);
+
+1 row created.
+
+SQL> insert into Works_On values ('666884444',3,40.0);
+
+1 row created.
+
+SQL> insert into Works_On values ('453453453',1,20.0);
+
+1 row created.
+
+SQL> insert into Works_On values ('453453453',2,20.0);
+
+1 row created.
+
+SQL> insert into Works_On values ('333445555',2,10.0);
+
+1 row created.
+
+SQL> insert into Works_On values ('333445555',3,10.0);
+
+1 row created.
+
+SQL> insert into Works_On values ('333445555',10,10.0);
+
+1 row created.
+
+SQL> insert into Works_On values ('333445555',20,10.0);
+
+1 row created.
+
+SQL> insert into Works_On values ('999887777',30,30.0);
+
+1 row created.
+
+SQL> insert into Works_On values ('999887777',10,10.0);
+
+1 row created.
+
+SQL> insert into Works_On values ('987987987',10,35.0);
+
+1 row created.
+
+SQL> insert into Works_On values ('987987987',30,5.0);
+
+1 row created.
+
+SQL> insert into Works_On values ('987654321',30,20.0);
+
+1 row created.
+
+SQL> insert into Works_On values ('987654321',20,15.0);
+
+1 row created.
+
+SQL> insert into Works_On values ('888665555',20,NULL);
+
+1 row created.
+
+SQL> 
+SQL> 
+SQL> delete from Dependent;
+
+0 rows deleted.
+
+SQL> commit;
+
+Commit complete.
+
+SQL> insert into Dependent values ('333445555','Alice','F','05-APR-86','Daughter');
+
+1 row created.
+
+SQL> insert into Dependent values ('333445555','Theodore','M','25-OCT-83','Son');
+
+1 row created.
+
+SQL> insert into Dependent values ('333445555','Joy','F','03-MAY-58','Spouse');
+
+1 row created.
+
+SQL> insert into Dependent values ('987654321','Abner','M','28-FEB-42','Spouse');
+
+1 row created.
+
+SQL> insert into Dependent values ('123456789','Michael','M','04-JAN-88','Son');
+
+1 row created.
+
+SQL> insert into Dependent values ('123456789','Alice','F','30-DEC-88','Daughter');
+
+1 row created.
+
+SQL> insert into Dependent values ('123456789','Elizabeth','F','05-MAY-67','Spouse');
+
+1 row created.
+
+SQL> 
+SQL> commit;
+
+Commit complete.
+
+SQL> start q-company.sql
+SQL> set echo on -- this is a MUST (for displaying queries in the output file)
+SP2-0158: unknown SET option "--"
+Help: https://docs.oracle.com/error-help/db/sp2-0158/
+SQL> set linesize 150 -- needed for displaying larger tables
+SP2-0158: unknown SET option "--"
+Help: https://docs.oracle.com/error-help/db/sp2-0158/
+SQL> set pagesize 120 -- for a better display
+SP2-0158: unknown SET option "--"
+Help: https://docs.oracle.com/error-help/db/sp2-0158/
+SQL> 
+SQL> -- 1
+SQL> SELECT e.fname, e.lname
+  2  FROM Employee e
+  3  JOIN Works_On w ON e.ssn = w.essn
+  4  JOIN Project p ON w.pno = p.pnumber
+  5  WHERE e.dno = 5
+  6    AND p.pname = 'ProductX'
+  7    AND w.hours > 10;
+
+FNAME           LNAME                                                                                                                                 
+--------------- ---------------                                                                                                                       
+John            Smith                                                                                                                                 
+Joyce           English                                                                                                                               
+
+SQL> 
+SQL> -- 2
+SQL> SELECT e.fname, e.lname
+  2  FROM Employee e
+  3  JOIN Dependent d ON e.ssn = d.essn
+  4  WHERE e.fname = d.dependent_name;
+
+no rows selected
+
+SQL> 
+SQL> -- 3
+SQL> SELECT e.fname, e.lname
+  2  FROM Employee e
+  3  JOIN Employee s ON e.superssn = s.ssn
+  4  WHERE s.fname = 'Franklin'
+  5    AND s.lname = 'Wong';
+
+FNAME           LNAME                                                                                                                                 
+--------------- ---------------                                                                                                                       
+John            Smith                                                                                                                                 
+Ramesh          Narayan                                                                                                                               
+Joyce           English                                                                                                                               
+
+SQL> 
+SQL> -- 4
+SQL> SELECT p.pname, SUM(w.hours) AS total_hours
+  2  FROM Project p
+  3  JOIN Works_On w ON p.pnumber = w.pno
+  4  GROUP BY p.pname;
+
+PNAME           TOTAL_HOURS                                                                                                                           
+--------------- -----------                                                                                                                           
+Newbenefits              55                                                                                                                           
+ProductX               52.5                                                                                                                           
+ProductY               37.5                                                                                                                           
+Computerization          55                                                                                                                           
+Reorganization           25                                                                                                                           
+ProductZ                 50                                                                                                                           
+
+6 rows selected.
+
+SQL> 
+SQL> -- 5
+SQL> SELECT e.fname, e.lname
+  2  FROM Employee e
+  3  WHERE NOT EXISTS (
+  4  	 SELECT p.pnumber
+  5  	 FROM Project p
+  6  	 WHERE NOT EXISTS (
+  7  	     SELECT *
+  8  	     FROM Works_On w
+  9  	     WHERE w.essn = e.ssn
+ 10  	       AND w.pno = p.pnumber
+ 11  	 )
+ 12  );
+
+no rows selected
+
+SQL> 
+SQL> -- 6
+SQL> SELECT e.fname, e.lname
+  2  FROM Employee e
+  3  WHERE NOT EXISTS (
+  4  	 SELECT *
+  5  	 FROM Works_On w
+  6  	 WHERE w.essn = e.ssn
+  7  );
+
+no rows selected
+
+SQL> 
+SQL> -- 7
+SQL> SELECT d.dname, AVG(e.salary) AS avg_salary
+  2  FROM Department d
+  3  JOIN Employee e ON d.dnumber = e.dno
+  4  GROUP BY d.dname;
+
+DNAME           AVG_SALARY                                                                                                                            
+--------------- ----------                                                                                                                            
+Headquarters         55000                                                                                                                            
+Research             33250                                                                                                                            
+Administration       25000                                                                                                                            
+
+SQL> 
+SQL> -- 8
+SQL> SELECT AVG(salary) AS avg_female_salary
+  2  FROM Employee
+  3  WHERE sex = 'F';
+
+AVG_FEMALE_SALARY                                                                                                                                     
+-----------------                                                                                                                                     
+            31000                                                                                                                                     
+
+SQL> 
+SQL> -- 9
+SQL> SELECT MAX(salary) AS max_salary,
+  2  	    MIN(salary) AS min_salary
+  3  FROM Employee;
+
+MAX_SALARY MIN_SALARY                                                                                                                                 
+---------- ----------                                                                                                                                 
+     55000      25000                                                                                                                                 
+
+SQL> 
+SQL> -- 10
+SQL> SELECT e.lname
+  2  FROM Employee e
+  3  JOIN Department d ON e.ssn = d.mgrssn
+  4  WHERE NOT EXISTS (
+  5  	 SELECT *
+  6  	 FROM Dependent dep
+  7  	 WHERE dep.essn = e.ssn
+  8  );
+
+LNAME                                                                                                                                                 
+---------------                                                                                                                                       
+Borg                                                                                                                                                  
+
+SQL> 
+SQL> spool stop
+

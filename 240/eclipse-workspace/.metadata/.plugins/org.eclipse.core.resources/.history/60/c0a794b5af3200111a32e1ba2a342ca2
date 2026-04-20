@@ -1,0 +1,40 @@
+import javafx.application.Application;
+import javafx.scene.Scene;
+import javafx.scene.control.TableColumn;
+import javafx.scene.control.TableView;
+import javafx.scene.control.cell.PropertyValueFactory;
+import javafx.scene.layout.BorderPane;
+import javafx.stage.Stage;
+
+public class TableDriver extends Application
+{
+	public static void main(String [] args)
+	{
+		launch(args);
+	}
+
+	@Override
+	public void start(Stage primaryStage) throws Exception 
+	{
+		BorderPane pane = new BorderPane();
+		
+		TableView<Fruit> tableView = new TableView<>();
+		
+		TableColumn<Fruit, String> colName = new TableColumn<>("Name");
+		colName.setCellValueFactory(new PropertyValueFactory<>("name"));
+		
+		TableColumn<Fruit, String> colColor = new TableColumn<>("Color");
+		colColor.setCellValueFactory(new PropertyValueFactory<>("color"));
+		
+		TableColumn<Fruit, Integer> colQuantity = new TableColumn<>("Quantity");
+		colQuantity.setCellValueFactory(new PropertyValueFactory<>("quantity"));
+		
+		tableView.getColumns().addAll(colName,colColor,colQuantity);
+
+		Scene scene = new Scene(pane, 300, 300);
+		
+		primaryStage.setTitle("My GUI");
+		primaryStage.setScene(scene);
+		primaryStage.show();
+	}
+}

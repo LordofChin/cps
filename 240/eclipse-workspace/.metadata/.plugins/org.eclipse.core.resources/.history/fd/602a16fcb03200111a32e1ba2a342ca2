@@ -1,0 +1,76 @@
+import java.util.ArrayList;
+
+import javafx.application.Application;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
+import javafx.scene.Scene;
+import javafx.scene.control.TableColumn;
+import javafx.scene.control.TableView;
+import javafx.scene.control.cell.PropertyValueFactory;
+import javafx.scene.layout.BorderPane;
+import javafx.stage.Stage;
+
+public class TableDriver extends Application
+{
+	public static void main(String [] args)
+	{
+		launch(args);
+	}
+
+	@Override
+	public void start(Stage primaryStage) throws Exception 
+	{
+		BorderPane pane = new BorderPane();
+		
+		TableView<Fruit> tableView = new TableView<>();
+		
+		TableColumn<Fruit, String> colName = new TableColumn<>("Name");
+		colName.setCellValueFactory(new PropertyValueFactory<>("name"));
+		
+		TableColumn<Fruit, String> colColor = new TableColumn<>("Color");
+		colColor.setCellValueFactory(new PropertyValueFactory<>("color"));
+		
+		TableColumn<Fruit, Integer> colQuantity = new TableColumn<>("Quantity");
+		colQuantity.setCellValueFactory(new PropertyValueFactory<>("quantity"));
+		
+		colName.setPrefWidth(160);
+		colColor.setPrefWidth(140);
+		colName.setPrefWidth(120);
+		
+		tableView.getColumns().addAll(colName,colColor,colQuantity);
+		
+		ObservableList<Fruit> fruits = FXCollections.observableArrayList(
+				fruits.add(new Fruit("Apple", "Red", 50)),
+				fruits.add(new Fruit("Apple", "Green", 30)),
+				fruits.add(new Fruit("Cherry", "Red", 530)),
+				fruits.add(new Fruit("Banana", "Yellow", 67)),
+				fruits.add(new Fruit("Peach", "Peach", 4500000)), // millions of peaches for me
+				fruits.add(new Fruit("Grape","Purple", 670)),
+				fruits.add(new Fruit("Grape","Green", 420))
+
+				);
+		ArrayList<Fruit> fruitsy = new ArrayList<>();
+		
+		fruits.add(new Fruit("Apple", "Red", 50));
+		fruits.add(new Fruit("Apple", "Green", 30));
+		fruits.add(new Fruit("Cherry", "Red", 530));
+		fruits.add(new Fruit("Banana", "Yellow", 67));
+		fruits.add(new Fruit("Peach", "Peach", 4500000)); // millions of peaches for me
+		fruits.add(new Fruit("Grape","Purple", 670));
+		fruits.add(new Fruit("Grape","Green", 420));
+
+
+		
+		//tableView.getItems().addAll(fruits);
+		tableView.setItems(fruits);
+
+
+		pane.setCenter(tableView);
+		
+		Scene scene = new Scene(pane, 300, 300);
+		
+		primaryStage.setTitle("My GUI");
+		primaryStage.setScene(scene);
+		primaryStage.show();
+	}
+}

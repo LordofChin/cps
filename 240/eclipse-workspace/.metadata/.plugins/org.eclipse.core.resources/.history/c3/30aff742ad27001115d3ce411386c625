@@ -1,0 +1,28 @@
+package cmu.edu;
+
+import javafx.stage.Stage;
+import javafx.application.Application;
+import javafx.scene.Scene;
+import javafx.scene.control.Label;
+import javafx.scene.layout.StackPane;
+import javafx.scene.paint.Color;
+
+public class Driver extends Application{
+	public static void main(String [] args)
+	{
+	launch(args);	
+		
+	}
+	public void start(Stage pStage)
+	{
+		Label lbl = new Label("CMU");
+		lbl.setTextFill(Color.BROWN);
+		
+		StackPane pane = new StackPane();
+		
+		Scene scene = new Scene(pane, 300,300);
+		
+		pStage = 
+	}
+	
+}

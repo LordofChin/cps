@@ -1,0 +1,53 @@
+package cmu.edu;
+
+import javafx.stage.Stage;
+import javafx.application.Application;
+import javafx.geometry.Insets;
+import javafx.geometry.Pos;
+import javafx.scene.Scene;
+import javafx.scene.control.Label;
+import javafx.scene.control.TextField;
+import javafx.scene.layout.StackPane;
+import javafx.scene.layout.FlowPane;
+import javafx.scene.paint.Color;
+import javafx.scene.shape.Circle;
+import javafx.scene.text.Font;
+
+public class Driver extends Application{
+	public static void main(String [] args)
+	{
+	launch(args);	
+		
+	}
+	public void start(Stage pStage)
+	{
+		
+		
+		
+		FlowPane fPane = new FlowPane();
+		fPane.getChildren().addAll(new Label("User Name: "), new TextField(), new Label("Password: "), new TextField());
+		fPane.setTranslateY(100);
+		fPane.setPadding(new Insets(20));
+		
+		Label lbl = new Label("CMU");
+		lbl.setTextFill(Color.GOLD);
+		lbl.setFont(new Font("Menlo",30));
+		lbl.setTranslateY(25);
+		
+		Circle circle = new Circle(50);
+		circle.setFill(Color.MAROON);
+		
+		StackPane pane = new StackPane();
+		pane.setAlignment(Pos.TOP_CENTER);
+		pane.getChildren().addAll(circle,lbl,fPane);
+		pane.setStyle("-fx-background-color: orange");
+		
+				
+		Scene scene = new Scene(pane, 300,300);
+		
+		pStage.setTitle("My GUI");
+		pStage.setScene(scene);
+		pStage.show();
+	}
+	
+}
