@@ -1,0 +1,24 @@
+
+HashSet: The most commonly used general-purpose Set implementation.
+	Underlying Data Structure: Hash table (HashMap internally).
+	Order: No guaranteed order.
+	Performance: Provides constant time (O(1)) performance on average for basic operations 		like add, remove, and contains.
+	Best Use Case: When fast operations and uniqueness are essential, but the order of 		elements does not matter.
+	Null Values: Allows one null element.
+
+LinkedHashSet: Extends HashSet but adds order maintenance capabilities.
+	Underlying Data Structure: Hash table plus a doubly-linked list running through all 		entries.
+	Order: Maintains insertion order.
+	Performance: Slightly slower than HashSet due to maintaining the linked list, but still 	offers O(1) average time for basic operations.
+	Best Use Case: When you need fast operations and also want to preserve the order in 		which elements were inserted.
+TreeSet: An implementation of the SortedSet and NavigableSet interfaces.
+	Underlying Data Structure: Red-Black tree (a self-balancing binary search tree).
+	Order: Elements are maintained in sorted order (either their natural ordering or a 		custom Comparator provided at creation).
+	Performance: O(log n) time for basic operations (add, remove, contains).
+	Best Use Case: When the elements need to be automatically sorted, or when range-based 		operations (like finding all elements between two values) are required.
+	Null Values: Does not allow null values (since Java 7)
+
+Implementation 	Add / Insert	Remove / Delete	Contains / Lookup	Iteration
+HashSet		𝑂(1) 𝑂(1) 𝑂(1) 𝑂(𝑛)
+LinkedHashSet 	𝑂(1) 𝑂(1) 𝑂(1) 𝑂(𝑛)
+TreeSet		𝑂(log𝑛) 𝑂(log𝑛) 𝑂(log𝑛) 𝑂(𝑛)
