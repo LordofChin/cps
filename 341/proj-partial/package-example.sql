@@ -16,9 +16,7 @@ set timing on;
 
 -- **** Package Declaration **** --
 create or replace package emp_package as
-    procedure get_dept_name(eno in employee.ssn%type);
-    procedure count_emps;
-    procedure count_emps_dept(DNUM in department.dnumber%type);
+	
 end;
 /
 show errors
@@ -26,6 +24,7 @@ show errors
 -- **** Package Body **** --
 create or replace package body emp_package as
 
+	-- get the department name that an employee works for
     procedure get_dept_name(eno in employee.ssn%type)
     as
 		dn varchar2(30);
@@ -41,16 +40,8 @@ create or replace package body emp_package as
 		when NO_DATA_FOUND then
 			dbms_output.put_line('No data found');
     end;
-	
-    procedure count_emps
-    as
-		cnt number;
-    begin
-		select count(*) into cnt from employee;
-		
-		dbms_output.put_line('# of employees : ' || cnt);
-    end;
-	
+
+	-- count all employees in a deptartment
     procedure count_emps_dept(DNUM in department.dnumber%type)
     as
 		cnt number;
@@ -58,6 +49,13 @@ create or replace package body emp_package as
 		select count(*) into cnt from employee where dno = DNUM;
 		
 		dbms_output.put_line('# of employees for department ' || DNUM || ': ' || cnt);
+    end;
+	-- remove dependent from employee
+	procedure remove_dep_emp(SSN in emplyee.ssn%type, DEP in dependent.dname%type)
+    as
+    begin
+		delete from dependent
+		where essn = SSN and dname = DEP;
     end;
 
 end;

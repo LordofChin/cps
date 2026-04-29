@@ -56,7 +56,7 @@ end;
 create or replace trigger dependent_trigger 
 after insert on dependent
 begin 
-UPDATE dependent SET dependent_name = upper(dependent_name), sex = upper(sex);
+UPDATE dependent SET dependent_name = upper(dependent_name), sex = upper(sex), relationship = upper(relationship);
 end;
 /
 
@@ -95,7 +95,7 @@ select get_dept_name('123456789') from dual;
 select get_dept_name('111111111') from dual;
 
 -- Test 1: below will call the function for every sssn
--- select lname || ', ' || fname || ' ' || 'works at ' || get_dept_name(ssn) || '.' as EMP_DEPT_INFO
+select lname || ', ' || fname || ' ' || 'works at ' || get_dept_name(ssn) || '.' as EMP_DEPT_INFO
 from employee;
 
 -- ADD parts 5-8 below
@@ -235,49 +235,53 @@ select lname, ssn, salary from employee
 
 -- **** Package Declaration **** --
 create or replace package emp_package as
-    procedure get_dept_name(eno in employee.ssn%type);
-    procedure count_emps;
-    procedure count_emps_dept(DNUM in department.dnumber%type);
+    procedure count_emps_dept(DEPTNAME in department.dname%type);
+    procedure count_deps_emp(EMPSSN in employee.ssn%type);
+	procedure remove_dep_emp(SSN in employee.ssn%type, DEP in dependent.dependent_name%type);
 end;
 /
 show errors
 
 -- **** Package Body **** --
 create or replace package body emp_package as
-
-    procedure get_dept_name(eno in employee.ssn%type)
+	-- count the employees in a department
+    procedure count_emps_dept(DEPTNAME in department.dname%type)
     as
-		dn varchar2(30);
+		cnt number;
     begin
-		dn := '';  -- initially empty value 
-		select d.dname into dn from employee e, department d
-		where e.ssn = eno and e.dno = d.dnumber;
-    
-		dbms_output.put_line('Department name of emp. ' || eno || ' is ' || dn);
-
-		-- exception handling
-		exception
-		when NO_DATA_FOUND then
-			dbms_output.put_line('No data found');
+		SELECT count(*) into cnt FROM EMPLOYEE E, DEPARTMENT D
+		WHERE D.dnumber = E.dno and D.dname = DEPTNAME;
+		
+		dbms_output.put_line('# of employees for department ' || DEPTNAME || ': ' || cnt);
     end;
-	
+
+	-- count dependents for an employee
     procedure count_deps_emp(EMPSSN in employee.ssn%type)
     as
 		cnt number;
     begin
 		select count(*) into cnt from dependent where essn = EMPSSN;
 		
-		dbms_output.put_line('# of employees for department ' || EMPSSN || ': ' || cnt);
+		dbms_output.put_line('employee ' || EMPSSN || ' has ' || cnt || ' dependents.');
     end;
-	
 
-    procedure count_emps_dept(DEPTNAME in department.dname%type)
-    as
-		cnt number;
+	-- remove dependent from employee
+	procedure remove_dep_emp(SSN in employee.ssn%type, DEP in dependent.dependent_name%type)
+    as 
+	emp_cnt number; 
+	dep_cnt number;
     begin
-		select count(*) into cnt from employee where dname = DEPTNAME;
-		
-		dbms_output.put_line('# of employees for department ' || DEPTNAME || ': ' || cnt);
+		select count(*) into emp_cnt from employee
+		where ssn = SSN;
+		select count(*) into dep_cnt from dependent
+		where essn = SSN and dependent_name = DEP;
+
+		if emp_cnt > 0 and dep_cnt > 0 then
+			delete from dependent
+			where essn = SSN and dependent_name = DEP;
+			dbms_output.put_line(DEP || ' succesfully removed from ' || SSN);
+
+		end if;
     end;
 
 end;
@@ -286,18 +290,16 @@ show errors
 
 
 -- **** Test **** --
-exec emp_package.get_dept_name('123456789');
+exec emp_package.count_emps_dept('RESEARCH');
 
-exec emp_package.get_dept_name('111111111');
+exec emp_package.count_deps_emp('123456789');
 
-exec emp_package.count_emps;
+Select d.dependent_name from dependent d where '123456789' = d.essn;
+exec emp_package.remove_dep_emp('123456789', 'Alice');
+Select d.dependent_name from dependent d where '123456789' = d.essn;
 
-exec emp_package.count_emps_dept(4);
-exec emp_package.count_emps_dept(3);
+exec emp_package.count_deps_emp('123456789');
 
--- undo changes that are done for testing, if you make a change to a table, 
--- you can undo that change by 'rollback'
--- rollback;
--- no rollback is needed for the package elements above
+rollback;
 
 

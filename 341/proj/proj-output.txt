@@ -1,0 +1,505 @@
+SQL> start U:\cps\341\proj\project.sql
+SQL> -- project.sql
+SQL> -- Carter Tufts and Chala Ahmed
+SQL> --
+SQL>
+SQL> set echo on;
+SQL> set linesize 150;
+SQL> set pagesize = 120
+SP2-0268: pagesize option not a valid number
+Help: https://docs.oracle.com/error-help/db/sp2-0268/
+SQL> set serveroutput on;
+SQL> set timing on;
+SQL>
+SQL> -- part 3
+SQL> - (sample solution for the department table only)
+SP2-0734: unknown command beginning "- (sample ..." - rest of line ignored.
+Help: https://docs.oracle.com/error-help/db/sp2-0734/
+SQL> create or replace trigger dept_trigger
+  2  after insert on department
+  3  begin
+  4          update department SET dname = upper(dname);
+  5  end;
+  6  /
+
+Trigger created.
+
+Elapsed: 00:00:00.11
+SQL> show errors
+No errors.
+SQL>
+SQL> -- **** Test **** --
+SQL> -- before update
+SQL> select * from department;
+
+DNAME              DNUMBER MGRSSN    MGRSTARTD
+--------------- ---------- --------- ---------
+ADMINISTRATION           4 987654321 01-JAN-95
+RESEARCH                 5 333445555 22-MAY-88
+HEADQUARTERS             1 888665555 19-JUN-81
+
+Elapsed: 00:00:00.03
+SQL>
+SQL> -- update - lowercase dname
+SQL> insert into Department values ('Lab', 9, '333445555', null);
+
+1 row created.
+
+Elapsed: 00:00:00.01
+SQL>
+SQL> -- notice that dnames are all uppercase now
+SQL> select * from department;
+
+DNAME              DNUMBER MGRSSN    MGRSTARTD
+--------------- ---------- --------- ---------
+ADMINISTRATION           4 987654321 01-JAN-95
+RESEARCH                 5 333445555 22-MAY-88
+HEADQUARTERS             1 888665555 19-JUN-81
+LAB                      9 333445555
+
+Elapsed: 00:00:00.01
+SQL>
+SQL> -- undo the update (insert)
+SQL> delete from department where dnumber = 9;
+
+1 row deleted.
+
+Elapsed: 00:00:00.01
+SQL>
+SQL> -- notice that dnames are all lowercase now
+SQL> select * from department;
+
+DNAME              DNUMBER MGRSSN    MGRSTARTD
+--------------- ---------- --------- ---------
+ADMINISTRATION           4 987654321 01-JAN-95
+RESEARCH                 5 333445555 22-MAY-88
+HEADQUARTERS             1 888665555 19-JUN-81
+
+Elapsed: 00:00:00.00
+SQL>
+SQL> -- ADD triggers for the other tables and their testing below
+SQL> create or replace trigger employee_trigger
+  2  after insert on employee
+  3  begin
+  4  UPDATE employee SET fname = upper(fname), lname = upper(lname), minit = upper(minit), address = upper(address);
+  5  end;
+  6  /
+
+Trigger created.
+
+Elapsed: 00:00:00.02
+SQL> create or replace trigger dept_loc_trigger
+  2  after insert on dept_locations
+  3  begin
+  4  UPDATE dept_locations SET dlocation = upper(dlocation);
+  5  end;
+  6  /
+
+Trigger created.
+
+Elapsed: 00:00:00.02
+SQL> create or replace trigger project_trigger
+  2  after insert on project
+  3  begin
+  4  UPDATE project SET pname = upper(pname), plocation = upper(plocation);
+  5  end;
+  6  /
+
+Trigger created.
+
+Elapsed: 00:00:00.08
+SQL> create or replace trigger dependent_trigger
+  2  after insert on dependent
+  3  begin
+  4  UPDATE dependent SET dependent_name = upper(dependent_name), sex = upper(sex), relationship = upper(relationship);
+  5  end;
+  6  /
+
+Trigger created.
+
+Elapsed: 00:00:00.02
+SQL>
+SQL>
+SQL> -- part 4
+SQL> -- Function that returns Dname from Department for any given employee.
+SQL> -- The parameter to the function is the SSN.
+SQL>
+SQL> CREATE OR REPLACE FUNCTION get_dept_name(EMPSSN IN employee.ssn%type)
+  2     RETURN department.dname%type
+  3  IS
+  4     mm department.dname%type;
+  5  BEGIN
+  6     mm := '';  -- initially empty value
+  7
+  8     SELECT dname into mm FROM EMPLOYEE E, DEPARTMENT D
+  9     WHERE E.DNO = D.DNUMBER AND E.SSN = EMPSSN ;
+ 10
+ 11     RETURN(mm);
+ 12
+ 13  -- exception handling
+ 14
+ 15     exception
+ 16       when NO_DATA_FOUND then
+ 17         dbms_output.put_line('No data found');
+ 18         RETURN(mm);
+ 19
+ 20  END;
+ 21  /
+
+Function created.
+
+Elapsed: 00:00:00.01
+SQL> show errors
+No errors.
+SQL>
+SQL> -- TEST the function get_dept_name, either Test1 or Test2 is sufficient
+SQL>
+SQL> -- Test 2:  in SQL: using the function in a query
+SQL> select get_dept_name('123456789') from dual;
+
+GET_DEPT_NAME('123456789')
+------------------------------------------------------------------------------------------------------------------------------------------------------
+RESEARCH
+
+Elapsed: 00:00:00.01
+SQL> select get_dept_name('111111111') from dual;
+
+GET_DEPT_NAME('111111111')
+------------------------------------------------------------------------------------------------------------------------------------------------------
+
+
+No data found
+Elapsed: 00:00:00.02
+SQL>
+SQL> -- Test 1: below will call the function for every sssn
+SQL> -- select lname || ', ' || fname || ' ' || 'works at ' || get_dept_name(ssn) || '.' as EMP_DEPT_INFO
+SQL> from employee;
+SP2-0734: unknown command beginning "from emplo..." - rest of line ignored.
+Help: https://docs.oracle.com/error-help/db/sp2-0734/
+SQL>
+SQL> -- ADD parts 5-8 below
+SQL>
+SQL> -- part 5
+SQL> -- Implement a Function that returns managerΓÇÖs full name for any given department.
+SQL> -- The parameter to the function would be the department name.
+SQL>
+SQL> CREATE OR REPLACE FUNCTION get_manager_name(DEPTNAME IN department.dname%type)
+  2     RETURN varchar2
+  3  IS
+  4          fn employee.fname%type;
+  5          lnm employee.lname%type;
+  6          fulln varchar2(50);
+  7  BEGIN
+  8          fn := '';  -- initially empty value
+  9          lnm := '';  -- initially empty value
+ 10          fulln := ''; -- initially empty value
+ 11
+ 12          SELECT E.fname, E.lname into fn, lnm FROM DEPARTMENT D, EMPLOYEE E
+ 13          WHERE D.mgrssn = E.SSN and D.dname = DEPTNAME;
+ 14
+ 15          fulln := fn || ' ' || lnm;
+ 16
+ 17          RETURN(fulln);
+ 18
+ 19  -- exception handling
+ 20
+ 21     exception
+ 22       when NO_DATA_FOUND then
+ 23         dbms_output.put_line('No data found');
+ 24         RETURN(fulln);
+ 25
+ 26  END;
+ 27  /
+
+Function created.
+
+Elapsed: 00:00:00.01
+SQL> show errors
+No errors.
+SQL>
+SQL> - **** Test **** -- function call
+SP2-0734: unknown command beginning "- **** Tes..." - rest of line ignored.
+Help: https://docs.oracle.com/error-help/db/sp2-0734/
+SQL>
+SQL> -- using the function in a query
+SQL>
+SQL> select dname || ' has manager ' || get_manager_name(dname) || '.' as DEPT_MGR_INFO
+  2  from department;
+
+DEPT_MGR_INFO
+------------------------------------------------------------------------------------------------------------------------------------------------------
+ADMINISTRATION has manager Jennifer Wallace.
+RESEARCH has manager Franklin Wong.
+HEADQUARTERS has manager James Borg.
+
+Elapsed: 00:00:00.01
+SQL>
+SQL>
+SQL> -- part 6
+SQL> -- Implement a Function that returns conrolling department's managerΓÇÖs full name for a project.
+SQL> -- The parameter to the function would be the project name.
+SQL>
+SQL> CREATE OR REPLACE FUNCTION get_proj_manager_name(PROJNAME IN project.pname%type)
+  2     RETURN varchar2
+  3  IS
+  4          fn employee.fname%type;
+  5          lnm employee.lname%type;
+  6          fulln varchar2(50);
+  7  BEGIN
+  8          fn := '';  -- initially empty value
+  9          lnm := '';  -- initially empty value
+ 10          fulln := ''; -- initially empty value
+ 11
+ 12          SELECT E.fname, E.lname into fn, lnm FROM EMPLOYEE E, DEPARTMENT D, PROJECT P
+ 13          WHERE P.dnum = D.dnumber and D.mgrssn = E.ssn and P.pname = PROJNAME;
+ 14
+ 15          fulln := fn || ' ' || lnm;
+ 16
+ 17          RETURN(fulln);
+ 18
+ 19  -- exception handling
+ 20
+ 21     exception
+ 22       when NO_DATA_FOUND then
+ 23         dbms_output.put_line('No data found');
+ 24         RETURN(fulln);
+ 25
+ 26  END;
+ 27  /
+
+Function created.
+
+Elapsed: 00:00:00.01
+SQL> show errors
+No errors.
+SQL>
+SQL> - **** Test **** -- function call
+SP2-0734: unknown command beginning "- **** Tes..." - rest of line ignored.
+Help: https://docs.oracle.com/error-help/db/sp2-0734/
+SQL>
+SQL>
+SQL> -- using the function in a query
+SQL>
+SQL> select pname || ' has manager ' || get_proj_manager_name(pname) || '.' as PROJ_MGR_INFO
+  2  from project;
+
+PROJ_MGR_INFO
+------------------------------------------------------------------------------------------------------------------------------------------------------
+ProductX has manager Franklin Wong.
+ProductY has manager Franklin Wong.
+ProductZ has manager Franklin Wong.
+Computerization has manager Jennifer Wallace.
+Reorganization has manager James Borg.
+Newbenefits has manager Jennifer Wallace.
+
+6 rows selected.
+
+Elapsed: 00:00:00.01
+SQL>
+SQL> -- part 7
+SQL> -- Implement a Procedure that returns increments an employess salary by x%
+SQL> -- The parameter to the procedure would be a percentage.
+SQL>
+SQL> CREATE OR REPLACE PROCEDURE incr_salary_emp_sp(EMPSSN IN employee.ssn%type, INCRRATE IN number)
+  2  AS
+  3      eln employee.lname%type;
+  4  BEGIN
+  5      select lname into eln from employee where ssn = EMPSSN;
+  6
+  7          if (eln is null) then
+  8                  dbms_output.put_line('Employee ' || EMPSSN || ' does not exist, no salary update!');
+  9          else
+ 10
+ 11                  update EMPLOYEE
+ 12                  set salary = salary * (1 + INCRRATE)
+ 13                  WHERE SSN = EMPSSN;
+ 14
+ 15                  dbms_output.put_line('Salary update is done for emp ' || EMPSSN);
+ 16          end if;
+ 17
+ 18          -- exception handling
+ 19
+ 20          exception
+ 21                  when NO_DATA_FOUND then
+ 22                          dbms_output.put_line('No data found for SSN: ' || EMPSSN);
+ 23  END;
+ 24  /
+
+Procedure created.
+
+Elapsed: 00:00:00.01
+SQL> show errors
+No errors.
+SQL>
+SQL> -- TEST
+SQL>
+SQL> select lname, ssn, salary from employee
+  2          where ssn = '123456789';
+
+LNAME           SSN           SALARY
+--------------- --------- ----------
+Smith           123456789      30000
+
+Elapsed: 00:00:00.01
+SQL>
+SQL> exec incr_salary_emp_sp('123456789', 0.10);
+Salary update is done for emp 123456789
+
+PL/SQL procedure successfully completed.
+
+Elapsed: 00:00:00.00
+SQL>
+SQL> select lname, ssn, salary from employee
+  2          where ssn = '123456789';
+
+LNAME           SSN           SALARY
+--------------- --------- ----------
+Smith           123456789      33000
+
+Elapsed: 00:00:00.01
+SQL>
+SQL> rollback;
+
+Rollback complete.
+
+Elapsed: 00:00:00.00
+SQL>
+SQL> select lname, ssn, salary from employee
+  2          where ssn = '111111111';
+
+no rows selected
+
+Elapsed: 00:00:00.01
+SQL>
+SQL> exec incr_salary_emp_sp('111111111', 0.10);
+No data found for SSN: 111111111
+
+PL/SQL procedure successfully completed.
+
+Elapsed: 00:00:00.01
+SQL>
+SQL> select lname, ssn, salary from employee
+  2          where ssn = '111111111';
+
+no rows selected
+
+Elapsed: 00:00:00.00
+SQL>
+SQL>
+SQL> -- **** Package Declaration **** --
+SQL> create or replace package emp_package as
+  2      procedure count_emps_dept(DEPTNAME in department.dname%type);
+  3      procedure count_deps_emp(EMPSSN in employee.ssn%type);
+  4          procedure remove_dep_emp(SSN in employee.ssn%type, DEP in dependent.dependent_name%type);
+  5  end;
+  6  /
+
+Package created.
+
+Elapsed: 00:00:00.01
+SQL> show errors
+No errors.
+SQL>
+SQL> -- **** Package Body **** --
+SQL> create or replace package body emp_package as
+  2          -- count the employees in a department
+  3      procedure count_emps_dept(DEPTNAME in department.dname%type)
+  4      as
+  5                  cnt number;
+  6      begin
+  7                  SELECT count(*) into cnt FROM EMPLOYEE E, DEPARTMENT D
+  8                  WHERE D.dnumber = E.dno and D.dname = DEPTNAME;
+  9
+ 10                  dbms_output.put_line('# of employees for department ' || DEPTNAME || ': ' || cnt);
+ 11      end;
+ 12
+ 13          -- count dependents for an employee
+ 14      procedure count_deps_emp(EMPSSN in employee.ssn%type)
+ 15      as
+ 16                  cnt number;
+ 17      begin
+ 18                  select count(*) into cnt from dependent where essn = EMPSSN;
+ 19
+ 20                  dbms_output.put_line('employee ' || EMPSSN || ' has ' || cnt || ' dependents.');
+ 21      end;
+ 22
+ 23          -- remove dependent from employee
+ 24          procedure remove_dep_emp(SSN in employee.ssn%type, DEP in dependent.dependent_name%type)
+ 25      as
+ 26          emp_cnt number;
+ 27          dep_cnt number;
+ 28      begin
+ 29                  select count(*) into emp_cnt from employee
+ 30                  where ssn = SSN;
+ 31                  select count(*) into dep_cnt from dependent
+ 32                  where essn = SSN and dependent_name = DEP;
+ 33
+ 34                  if emp_cnt > 0 and dep_cnt > 0 then
+ 35                          delete from dependent
+ 36                          where essn = SSN and dependent_name = DEP;
+ 37                          dbms_output.put_line(DEP || ' succesfully removed from ' || SSN);
+ 38
+ 39                  end if;
+ 40      end;
+ 41
+ 42  end;
+ 43  /
+
+Package body created.
+
+Elapsed: 00:00:00.00
+SQL> show errors
+No errors.
+SQL>
+SQL>
+SQL> -- **** Test **** --
+SQL> exec emp_package.count_emps_dept('RESEARCH');
+# of employees for department RESEARCH: 4
+
+PL/SQL procedure successfully completed.
+
+Elapsed: 00:00:00.01
+SQL>
+SQL> exec emp_package.count_deps_emp('123456789');
+employee 123456789 has 3 dependents.
+
+PL/SQL procedure successfully completed.
+
+Elapsed: 00:00:00.01
+SQL>
+SQL> Select d.dependent_name from dependent d where '123456789' = d.essn;
+
+DEPENDENT_NAME
+---------------
+Alice
+Elizabeth
+Michael
+
+Elapsed: 00:00:00.00
+SQL> exec emp_package.remove_dep_emp('123456789', 'Alice');
+Alice succesfully removed from 123456789
+
+PL/SQL procedure successfully completed.
+
+Elapsed: 00:00:00.01
+SQL> Select d.dependent_name from dependent d where '123456789' = d.essn;
+
+DEPENDENT_NAME
+---------------
+Elizabeth
+Michael
+
+Elapsed: 00:00:00.01
+SQL>
+SQL> exec emp_package.count_deps_emp('123456789');
+employee 123456789 has 2 dependents.
+
+PL/SQL procedure successfully completed.
+
+Elapsed: 00:00:00.00
+SQL>
+SQL> rollback;
+
+Rollback complete.
+
+Elapsed: 00:00:00.06
