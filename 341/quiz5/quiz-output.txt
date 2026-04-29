@@ -1,0 +1,92 @@
+SQL> start quiz5/quiz5.sql
+SQL> set echo on
+SQL> set linesize 120
+SQL> set pagesize 120
+SQL> set serveroutput on
+SQL>
+SQL> select * from project_bk2
+  2
+SQL> CREATE OR REPLACE PROCEDURE incr_salary_emp_sp(EMPSSN IN employee.ssn%type, INCRRATE IN number)
+  2  AS
+  3      eln employee.lname%type; -- Added missing semicolon here just in case
+  4  BEGIN
+  5      select lname into eln from employee where ssn = EMPSSN;
+  6
+  7          if (eln is null) then
+  8                  dbms_output.put_line('Employee ' || EMPSSN || ' does not exist, no salary update!');
+  9          else
+ 10
+ 11                  update EMPLOYEE
+ 12                  set salary = salary * (1 + INCRRATE)
+ 13                  WHERE SSN = EMPSSN;
+ 14
+ 15                  dbms_output.put_line('Salary update is done for emp ' || EMPSSN);
+ 16          end if;
+ 17
+ 18          -- exception handling
+ 19
+ 20          exception
+ 21                  when NO_DATA_FOUND then
+ 22                          dbms_output.put_line('No data found for SSN: ' || EMPSSN);
+ 23  END;
+ 24  /
+
+Procedure created.
+
+Elapsed: 00:00:00.00
+SQL> show errors
+No errors.
+SQL>
+SQL> -- TEST
+SQL>
+SQL> select lname, ssn, salary from employee
+  2          where ssn = '123456789';
+
+LNAME           SSN           SALARY
+--------------- --------- ----------
+Smith           123456789      30000
+
+Elapsed: 00:00:00.01
+SQL>
+SQL> exec incr_salary_emp_sp('123456789', 0.10);
+Salary update is done for emp 123456789
+
+PL/SQL procedure successfully completed.
+
+Elapsed: 00:00:00.00
+SQL>
+SQL> select lname, ssn, salary from employee
+  2          where ssn = '123456789';
+
+LNAME           SSN           SALARY
+--------------- --------- ----------
+Smith           123456789      33000
+
+Elapsed: 00:00:00.01
+SQL>
+SQL> rollback;
+
+Rollback complete.
+
+Elapsed: 00:00:00.01
+SQL>
+SQL> select lname, ssn, salary from employee
+  2          where ssn = '111111111';
+
+no rows selected
+
+Elapsed: 00:00:00.01
+SQL>
+SQL> exec incr_salary_emp_sp('111111111', 0.10);
+No data found for SSN: 111111111
+
+PL/SQL procedure successfully completed.
+
+Elapsed: 00:00:00.01
+SQL>
+SQL> select lname, ssn, salary from employee
+  2          where ssn = '111111111';
+
+no rows selected
+
+Elapsed: 00:00:00.00
