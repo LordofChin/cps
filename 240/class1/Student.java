@@ -19,7 +19,11 @@ public class Student
 		this.name = "Steve Jobs";
 	}
 
-	public static void main(String args[])
+	public Student(String line) {
+        //TODO Auto-generated constructor stub
+    }
+
+    public static void main(String args[])
 	{		
 		Student steve = new Student();
 		steve.display();		
@@ -27,5 +31,15 @@ public class Student
 	public void display() 
 	{
 		System.out.printf("%s - %d - %f", this.name, this.age, this.cgpa);
+	}
+
+    public Object getFirstName() {
+        // TODO Auto-generated method stub
+        throw new UnsupportedOperationException("Unimplemented method 'getFirstName'");
+    }
+
+	public Object getLastName() {
+		// TODO Auto-generated method stub
+		throw new UnsupportedOperationException("Unimplemented method 'getLastName'");
 	}
 }
